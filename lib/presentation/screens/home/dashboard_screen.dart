@@ -5,6 +5,7 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return Scaffold(
         body: Center(
       child: Column(
@@ -15,5 +16,8 @@ class DashboardScreen extends StatelessWidget {
         ],
       ),
     ));
+=======
+    return const Placeholder();
+>>>>>>> 17c898d (feat: add home screen)
   }
 }
