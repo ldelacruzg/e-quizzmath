@@ -45,7 +45,7 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/units/:unitId/playlist',
-      builder: (context, state) => const PlaylistScreen(),
+      builder: (context, state) => const PlayListScreen(),
     ),
     GoRoute(
       path: '/quiz',
