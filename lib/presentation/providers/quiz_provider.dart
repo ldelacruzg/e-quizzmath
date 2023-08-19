@@ -1,4 +1,5 @@
 import 'package:e_quizzmath/domain/topic/entities/question.dart';
+import 'package:e_quizzmath/domain/topic/entities/quiz_timer.dart';
 import 'package:e_quizzmath/infrastructure/models/local_question_model.dart';
 import 'package:e_quizzmath/shared/data/local_questions.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,36 @@ class QuizProvider with ChangeNotifier {
   bool initialLoading = true;
   int currentQuestionIndex = 0;
   List<Question> questions = [];
+  QuizTimer quizTimer = QuizTimer();
 
   Question get currentQuestion => questions[currentQuestionIndex];
 
   String get correctOptionText =>
       currentQuestion.options[currentQuestion.correctAnswer].text;
+
+  String get timer {
+    final minutes = quizTimer.time.inMinutes;
+    final seconds = quizTimer.time.inSeconds % 60;
+
+    final secondsStr = seconds < 10 ? '0$seconds' : '$seconds';
+
+    return '${minutes}min ${secondsStr}s';
+  }
+
+  void startTimer() {
+    Stream<int>.periodic(const Duration(seconds: 1), (seconds) => seconds + 1)
+        .listen(
+      (time) {
+        quizTimer.time = Duration(seconds: time);
+        notifyListeners();
+      },
+    );
+  }
+
+  void switchTimer() {
+    quizTimer.isRunning = !quizTimer.isRunning;
+    notifyListeners();
+  }
 
   bool isLastQuestion() {
     return currentQuestionIndex == questions.length - 1;
