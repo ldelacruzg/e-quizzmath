@@ -42,11 +42,7 @@ class QuizQuestionNumberAndProgress extends StatelessWidget {
                   ),
                   const SizedBox(width: 5),
                   Text(
-<<<<<<< HEAD
-                    quizProvider.timer,
-=======
                     '3min 55s',
->>>>>>> 18c4ff6 (feat: add the operation of the questionnaire)
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
