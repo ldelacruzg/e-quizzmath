@@ -11,13 +11,27 @@ class QuizScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: QuizProvider()..loadQuestions(),
-      child: const _QuizView(),
+      child: const QuizView(),
     );
   }
 }
 
-class _QuizView extends StatelessWidget {
-  const _QuizView();
+class QuizView extends StatefulWidget {
+  const QuizView({super.key});
+
+  @override
+  State<QuizView> createState() => _QuizViewState();
+}
+
+class _QuizViewState extends State<QuizView> {
+  late final QuizProvider quizProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    quizProvider = context.read<QuizProvider>();
+    quizProvider.startTimer();
+  }
 
   @override
   Widget build(BuildContext context) {
