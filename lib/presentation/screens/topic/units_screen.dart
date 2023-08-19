@@ -19,7 +19,7 @@ class UnitsScreen extends StatelessWidget {
             trailing: PopupMenuButton(
               itemBuilder: (context) => [
                 PopupMenuItem(
-                  child: const Text('Ver Playlist'),
+                  child: const Text('Playlist'),
                   onTap: () {
                     context.push(
                       '/units/:unitId/playlist',
@@ -28,7 +28,7 @@ class UnitsScreen extends StatelessWidget {
                   },
                 ),
                 PopupMenuItem(
-                  child: const Text('Iniciar Cuestionario'),
+                  child: const Text('Jugar'),
                   onTap: () {
                     context.push('/quiz');
                   },

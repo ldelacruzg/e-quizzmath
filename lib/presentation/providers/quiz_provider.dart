@@ -1,0 +1,62 @@
+import 'package:e_quizzmath/domain/topic/entities/question.dart';
+import 'package:e_quizzmath/infrastructure/models/local_question_model.dart';
+import 'package:e_quizzmath/shared/data/local_questions.dart';
+import 'package:flutter/material.dart';
+
+class QuizProvider with ChangeNotifier {
+  bool initialLoading = true;
+  int currentQuestionIndex = 0;
+  List<Question> questions = [];
+
+  Question get currentQuestion => questions[currentQuestionIndex];
+
+  String get correctOptionText =>
+      currentQuestion.options[currentQuestion.correctAnswer].text;
+
+  bool isLastQuestion() {
+    return currentQuestionIndex == questions.length - 1;
+  }
+
+  bool anyOptionSelected() {
+    return currentQuestion.options.any((option) => option.isSelected);
+  }
+
+  void selectOption(int index) {
+    final options = currentQuestion.options;
+    for (int i = 0; i < options.length; i++) {
+      final option = options[i];
+      if (i == index) {
+        option.isSelected = true;
+      } else {
+        option.isSelected = false;
+      }
+    }
+    notifyListeners();
+  }
+
+  void nextQuestion() {
+    if (currentQuestionIndex < questions.length - 1) {
+      currentQuestionIndex++;
+      notifyListeners();
+    }
+  }
+
+  bool isCorrectOptionSelected() {
+    final seletedOption =
+        currentQuestion.options.firstWhere((option) => option.isSelected).index;
+    final correctOption = currentQuestion.correctAnswer;
+
+    return seletedOption == correctOption;
+  }
+
+  void loadQuestions() async {
+    //await Future.delayed(const Duration(seconds: 2));
+    final List<Question> questions = localQuestions
+        .map((e) => LocalQuestionModel.fromJson(e).toQuestionEntity())
+        .toList();
+
+    this.questions.addAll(questions);
+    initialLoading = false;
+    notifyListeners();
+  }
+}
