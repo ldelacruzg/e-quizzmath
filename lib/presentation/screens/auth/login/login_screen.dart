@@ -31,61 +31,55 @@ class LoginScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 13),
-                  const Text(
-                    "¡Hola!",
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      "¡Hola! 👋",
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: TextFormField(
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                      decoration: const InputDecoration(
-                          fillColor: Color.fromRGBO(247, 238, 249, 2),
-                          filled: true,
-                          prefixIcon: Icon(Icons.email_outlined, size: 25),
-                          labelText: "Correo electrónico",
-                          labelStyle: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black,
-                          )),
+                  TextFormField(
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
                     ),
+                    decoration: const InputDecoration(
+                        fillColor: Color.fromRGBO(247, 238, 249, 2),
+                        filled: true,
+                        prefixIcon: Icon(Icons.email_outlined, size: 25),
+                        labelText: "Correo electrónico",
+                        labelStyle: TextStyle(
+                          fontSize: 15,
+                          color: Colors.black,
+                        )),
                   ),
-                  const SizedBox(height: 5),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    child: TextFormField(
-                      obscureText: true,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                      decoration: const InputDecoration(
-                          fillColor: Color.fromRGBO(247, 238, 249, 2),
-                          filled: true,
-                          prefixIcon: Icon(Icons.password_outlined, size: 25),
-                          labelText: "Contraseña",
-                          labelStyle: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black,
-                          )),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    obscureText: true,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
                     ),
+                    decoration: const InputDecoration(
+                        fillColor: Color.fromRGBO(247, 238, 249, 2),
+                        filled: true,
+                        prefixIcon: Icon(Icons.password_outlined, size: 25),
+                        labelText: "Contraseña",
+                        labelStyle: TextStyle(
+                          fontSize: 15,
+                          color: Colors.black,
+                        )),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const ForgotPasswordScreen()),
+                            builder: (context) => const ForgotPasswordScreen()),
                       );
                     },
                     child: const Text('¿Olvidó su contraseña?'),

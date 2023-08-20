@@ -36,7 +36,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 13),
                   const Text(
-                    "Crear una cuenta",
+                    "Crear una cuenta ✏️",
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -131,21 +131,21 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                           )),
                     ),
                   ),
-
                   const SizedBox(height: 200),
                   ElevatedButton(
                     onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>  const CreateAccountCredencialsScreen()),
-                  );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const CreateAccountCredencialsScreen()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 130, vertical: 10),
-                    primary: Colors.deepPurpleAccent,
-                    onPrimary: Colors.white),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 130, vertical: 10),
+                        primary: Colors.deepPurpleAccent,
+                        onPrimary: Colors.white),
                     child: const Text('Continuar'),
                   ),
                 ],
