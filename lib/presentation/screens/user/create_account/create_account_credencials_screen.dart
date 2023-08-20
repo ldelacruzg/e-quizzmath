@@ -1,5 +1,4 @@
 import 'package:e_quizzmath/presentation/screens/auth/login/login_screen.dart';
-import 'package:e_quizzmath/presentation/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class CreateAccountCredencialsScreen extends StatelessWidget {
@@ -7,6 +6,7 @@ class CreateAccountCredencialsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorSchema = Theme.of(context).colorScheme;
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
@@ -28,8 +28,9 @@ class CreateAccountCredencialsScreen extends StatelessWidget {
                           Navigator.pop(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    const CreateAccountCredencialsScreen()),
+                              builder: (context) =>
+                                  const CreateAccountCredencialsScreen(),
+                            ),
                           );
                         },
                       ),
@@ -37,7 +38,7 @@ class CreateAccountCredencialsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 13),
                   const Text(
-                    "Crear una cuenta",
+                    "Crear una cuenta ✏️",
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -123,11 +124,14 @@ class CreateAccountCredencialsScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 130, vertical: 10),
-                        primary: Colors.deepPurpleAccent,
-                        onPrimary: Colors.white),
-                    child: const Text('Registrarse'),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 130, vertical: 10),
+                      backgroundColor: colorSchema.primary,
+                    ),
+                    child: const Text(
+                      'Registrarse',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),

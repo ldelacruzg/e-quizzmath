@@ -78,25 +78,20 @@ class _Slide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleLarge;
-    final captionStyle = Theme.of(context).textTheme.bodyLarge;
+    return Column(
+      children: [
+        // Image
+        Image.asset(imageUrl),
+        const SizedBox(height: 20),
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 10),
-            Image(image: AssetImage(imageUrl)),
-            const SizedBox(height: 10),
-            Text(title, style: titleStyle),
-            const SizedBox(height: 10),
-            Text(caption, style: captionStyle),
-          ],
+        // Text
+        Text(
+          caption,
+          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
-      ),
+        const SizedBox(height: 20),
+      ],
     );
   }
 }
