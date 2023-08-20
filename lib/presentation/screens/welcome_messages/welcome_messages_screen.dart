@@ -12,16 +12,16 @@ class SlideInfo {
 final slides = <SlideInfo>[
   SlideInfo(
       'e-QuizzMath',
-      'Desata el geniomatemático dentro de ti, un desafío a la vez',
+      'Desata el genio matemático dentro de ti, un desafío a la vez',
       'assets/images/welcome_messages/1.png'),
+  SlideInfo(
+      'e-QuizzMath',
+      'Conviértete en un maestro a través de emocionantes y divertidos cuestionarios',
+      'assets/images/welcome_messages/2.png'),
   SlideInfo(
       'e-QuizzMath',
       'Aprende, juega, domina. ¡Las matemáticas nunca habían sido tan divertidas!',
       'assets/images/welcome_messages/3.png'),
-  SlideInfo(
-      'e-QuizzMath',
-      'Conviértete en un maestro a través de emocionantes y divertidos cuestionarios',
-      'assets/images/welcome_messages/2.png')
 ];
 
 class WelcomeMessageScreen extends StatelessWidget {
@@ -30,41 +30,57 @@ class WelcomeMessageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        PageView(
-          physics: const BouncingScrollPhysics(),
-          children: slides
-              .map((slideData) => _Slide(
-                  title: slideData.title,
-                  caption: slideData.caption,
-                  imageUrl: slideData.imageUrl))
-              .toList(),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Sliders
+            Expanded(
+              child: PageView.builder(
+                itemCount: slides.length,
+                itemBuilder: (context, index) {
+                  final SlideInfo slide = slides[index];
+
+                  return _Slide(
+                    title: slide.title,
+                    caption: slide.caption,
+                    imageUrl: slide.imageUrl,
+                  );
+                },
+              ),
+            ),
+
+            // Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () {
+                      context.push('/create-account/personal-info');
+                    },
+                    child: const Text('EMPEZAR'),
+                  ),
+                ),
+              ],
+            ),
+
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      context.push('/login');
+                    },
+                    child: const Text('YA TENGO UNA CUENTA'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        Positioned(
-            right: 50,
-            width: 300,
-            top: 650,
-            child: ElevatedButton(
-              onPressed: () {
-                context.push("/login");
-              },
-              style: ElevatedButton.styleFrom(
-                  primary: Colors.deepPurpleAccent, onPrimary: Colors.white),
-              child: const Text('YA TENGO UNA CUENTA'),
-            )),
-        Positioned(
-            right: 50,
-            width: 300,
-            top: 700,
-            child: ElevatedButton(
-              child: const Text('EMPEZAR'),
-              onPressed: () {
-                context.push("/create-account/personal-info");
-              },
-            )),
-      ],
-    ));
+      ),
+    );
   }
 }
 
@@ -73,12 +89,16 @@ class _Slide extends StatelessWidget {
   final String caption;
   final String imageUrl;
 
-  const _Slide(
-      {required this.title, required this.caption, required this.imageUrl});
+  const _Slide({
+    required this.title,
+    required this.caption,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Image
         Image.asset(imageUrl),
@@ -87,7 +107,7 @@ class _Slide extends StatelessWidget {
         // Text
         Text(
           caption,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 24),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
