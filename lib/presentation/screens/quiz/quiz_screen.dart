@@ -2,6 +2,7 @@ import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/quiz/quiz_question_actions.dart';
 import 'package:e_quizzmath/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class QuizScreen extends StatelessWidget {
@@ -19,11 +20,39 @@ class QuizScreen extends StatelessWidget {
 class _QuizView extends StatelessWidget {
   const _QuizView();
 
+  GestureTapCallback _onTapOption() {
+    return () => showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Text('¿Estás seguro de salir del cuestionario?'),
+            content: const Text(
+                'Si sales del cuestionario, perderás todo tu progreso.'),
+            actions: [
+              TextButton(
+                onPressed: () => context.pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => context.pop(true),
+                child: const Text('Si'),
+              ),
+            ],
+          ),
+        ).then(
+          (value) => {if (value == true) context.pop()},
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vectores'),
+        leading: GestureDetector(
+          onTap: _onTapOption(),
+          child: const Icon(Icons.arrow_back_rounded),
+        ),
       ),
       body: const Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),

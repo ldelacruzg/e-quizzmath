@@ -67,6 +67,8 @@ class _QuizQuestionActionsState extends State<QuizQuestionActions> {
       );
     }
 
+    quizProvider.updateSelectedAnswer();
+
     setState(() {
       isNextButtonVisible = true;
     });
