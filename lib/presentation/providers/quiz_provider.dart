@@ -75,6 +75,13 @@ class QuizProvider with ChangeNotifier {
     return seletedOption == correctOption;
   }
 
+  void updateSelectedAnswer() {
+    final seletedOption =
+        currentQuestion.options.firstWhere((option) => option.isSelected).index;
+    currentQuestion.selectedAnswer = seletedOption;
+    notifyListeners();
+  }
+
   void loadQuestions() async {
     //await Future.delayed(const Duration(seconds: 2));
     final List<Question> questions = localQuestions

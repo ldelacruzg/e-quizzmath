@@ -1,11 +1,12 @@
 import 'package:e_quizzmath/shared/enums/question_difficulty_enum.dart';
 
 class Question {
-  int id;
-  String question;
-  List<Option> options;
-  int correctAnswer;
-  QuestionDifficulty difficulty;
+  final int id;
+  final String question;
+  final List<Option> options;
+  final int correctAnswer;
+  final QuestionDifficulty difficulty;
+  int selectedAnswer = -1;
 
   Question({
     required this.id,

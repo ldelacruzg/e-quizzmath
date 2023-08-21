@@ -18,13 +18,15 @@ class QuizQuestionNumberAndProgress extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
-              onTap: () {},
-              child: const Icon(
-                Icons.close_rounded,
-                size: 30,
+            // Question Number
+            Text(
+              '${currentQuestionNumber.toString()}/${totalQuestions.toString()}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(width: 10),
 
             // Timer
             Container(
@@ -60,15 +62,6 @@ class QuizQuestionNumberAndProgress extends StatelessWidget {
         // Progress Bar
         Row(
           children: [
-            // Question Number
-            Text(
-              '${currentQuestionNumber.toString()}/${totalQuestions.toString()}',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(width: 10),
             Expanded(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),

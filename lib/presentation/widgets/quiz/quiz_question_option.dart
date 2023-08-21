@@ -17,11 +17,11 @@ class QuizQuestionOption extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        if (quizProvider.currentQuestion.selectedAnswer != -1) return;
         quizProvider.selectOption(index);
       },
       child: Container(
         decoration: BoxDecoration(
-          //color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color:
