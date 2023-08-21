@@ -55,6 +55,30 @@ class _QuizViewState extends State<QuizView> {
         );
   }
 
+  GestureTapCallback _onTapOption() {
+    return () => showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Text('¿Estás seguro de salir del cuestionario?'),
+            content: const Text(
+                'Si sales del cuestionario, perderás todo tu progreso.'),
+            actions: [
+              TextButton(
+                onPressed: () => context.pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => context.pop(true),
+                child: const Text('Si'),
+              ),
+            ],
+          ),
+        ).then(
+          (value) => {if (value == true) context.pop()},
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
