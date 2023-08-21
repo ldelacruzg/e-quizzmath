@@ -9,7 +9,10 @@ class TopicsScreen extends StatelessWidget {
     return GridView.count(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
       crossAxisCount: 2,
+      childAspectRatio: MediaQuery.of(context).size.width /
+          (MediaQuery.of(context).size.height / 1.8),
       children: const [
         _TopicItem(
           title: 'Álgebra Lineal',
