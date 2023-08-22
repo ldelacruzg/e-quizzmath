@@ -1,3 +1,4 @@
+export 'package:e_quizzmath/presentation/screens/quiz/quiz_result_screen.dart';
 export 'package:e_quizzmath/presentation/screens/home/dashboard_screen.dart';
 export 'package:e_quizzmath/presentation/screens/user/create_account/create_account_credencials_screen.dart';
 export 'package:e_quizzmath/presentation/screens/user/create_account/create_account_personal_info_screen.dart';
