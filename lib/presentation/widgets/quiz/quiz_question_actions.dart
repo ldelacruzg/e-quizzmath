@@ -1,5 +1,6 @@
 import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class QuizQuestionActions extends StatefulWidget {
@@ -102,7 +103,10 @@ class _QuizQuestionActionsState extends State<QuizQuestionActions> {
           visible: isNextButtonVisible && quizProvider.isLastQuestion(),
           child: Expanded(
             child: FilledButton(
-              onPressed: () {},
+              onPressed: () {
+                quizProvider.endQuiz();
+                context.push('/quiz/result');
+              },
               child: const Text('FINALIZAR'),
             ),
           ),

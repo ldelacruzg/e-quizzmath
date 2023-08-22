@@ -73,5 +73,13 @@ const List<Map<String, dynamic>> localQuestions = [
     "options": ["(-8, 12)", "(-2, 3)", "(8, -12)", "(2, -3)"],
     "correctAnswer": 0,
     "difficulty": "hard"
+  },
+  {
+    "id": 10,
+    "question":
+        "Si el vector V = (3, -5) se multiplica por el escalar 2, ¿cuál es el resultado?",
+    "options": ["(2, -5)", "(3, -2)", "(-6, 10)", "(6, -10)"],
+    "correctAnswer": 3,
+    "difficulty": "easy"
   }
 ];

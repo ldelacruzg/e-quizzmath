@@ -10,10 +10,7 @@ class QuizScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: QuizProvider()..loadQuestions(),
-      child: const QuizView(),
-    );
+    return const QuizView();
   }
 }
 

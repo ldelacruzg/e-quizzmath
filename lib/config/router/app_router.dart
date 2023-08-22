@@ -52,6 +52,10 @@ final appRouter = GoRouter(
       builder: (context, state) => const QuizScreen(),
     ),
     GoRoute(
+      path: '/quiz/result',
+      builder: (context, state) => const QuizResultScreen(),
+    ),
+    GoRoute(
       path: '/leaderboard',
       builder: (context, state) => const LeaderboardScreen(),
     ),
