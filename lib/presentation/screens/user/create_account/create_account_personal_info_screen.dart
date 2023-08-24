@@ -51,9 +51,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese sus nombres';
-                      }
+                      return value!.isEmpty ? 'Ingrese sus nombres' : null;
                     },
                   ),
                   TextFormField(
@@ -69,9 +67,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese sus apellidos';
-                      }
+                      return value!.isEmpty ? 'Ingrese sus apellidos' : null;
                     },
                   ),
                   TextFormField(
@@ -88,9 +84,9 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese un número de celular';
-                      }
+                      return value!.isEmpty
+                          ? 'Ingrese un número de celular'
+                          : null;
                     },
                   ),
                   TextFormField(
@@ -107,9 +103,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese un email';
-                      }
+                      return value!.isEmpty ? 'Ingrese un email' : null;
                     },
                   ),
                   TextFormField(
@@ -126,9 +120,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese una contraseña';
-                      }
+                      return value!.isEmpty ? 'Ingrese una contraseña' : null;
                     },
                   ),
                   const SizedBox(height: 10),
@@ -154,7 +146,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: Text('Cuenta creada'),
+                                      title: const Text('Cuenta creada'),
                                       content: const Text(
                                           'Se ha creado correctamente su usuario'),
                                       actions: [
@@ -167,7 +159,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                                       const LoginScreen()),
                                             );
                                           },
-                                          child: Text('Aceptar'),
+                                          child: const Text('Aceptar'),
                                         ),
                                       ],
                                     );
@@ -177,7 +169,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: Text('Alerta..! 🚧'),
+                                      title: const Text('Alerta..! 🚧'),
                                       content: const Text(
                                           'Se han encontrado campos vacios'),
                                       actions: [
@@ -185,7 +177,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
-                                          child: Text('Aceptar'),
+                                          child: const Text('Aceptar'),
                                         ),
                                       ],
                                     );
