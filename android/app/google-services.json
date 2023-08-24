@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "945875959109",
+    "project_id": "e-quizzmath-a7a64",
+    "storage_bucket": "e-quizzmath-a7a64.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945875959109:android:08d012f35b0044b99e522c",
+        "android_client_info": {
+          "package_name": "com.example.e_quizzmath"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "945875959109-kpfesktvsioulvam5mmie4uve8ihe49k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZnpX478FHehNTgkGEflosdfqufiTvVK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "945875959109-115423arbjvinrgkk40dc996h03gtlg9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

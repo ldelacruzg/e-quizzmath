@@ -1,10 +1,13 @@
 import 'package:e_quizzmath/config/router/app_router.dart';
 import 'package:e_quizzmath/config/theme/app_theme.dart';
 import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   runApp(
     MultiProvider(
       providers: [
