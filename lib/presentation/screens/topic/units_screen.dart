@@ -28,7 +28,7 @@ class UnitsScreen extends StatelessWidget {
                   },
                 ),
                 PopupMenuItem(
-                  child: const Text('Jugar'),
+                  child: const Text('Quiz'),
                   onTap: () {
                     context.push('/quiz');
                   },
