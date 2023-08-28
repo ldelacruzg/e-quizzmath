@@ -30,7 +30,7 @@ class _PLayListView extends StatelessWidget {
       body: Column(
         children: [
           MyVideoPlayer(urlVideo: playListProvider.currentVideo.videoUrl),
-          Text(playListProvider.currentVideo.videoUrl),
+          //Text(playListProvider.currentVideo.videoUrl),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             child: Text(

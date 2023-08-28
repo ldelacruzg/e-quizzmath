@@ -1,38 +1,37 @@
 import 'package:e_quizzmath/domain/leaderboard/entities/leaderboard_item.dart';
+import 'package:e_quizzmath/infrastructure/models/coll_user_model.dart';
 
-class LeaderboardItemModel extends LeaderboardItem {
-  final int id;
+class LeaderboardItemModel {
+  final String id;
+  final int score;
+  final UserModel userModel;
 
   LeaderboardItemModel({
     required this.id,
-    required String name,
-    required int score,
-    required String avatar,
-  }) : super(name: name, score: score, avatar: avatar);
+    required this.score,
+    required this.userModel,
+  });
 
   factory LeaderboardItemModel.fromJson(Map<String, dynamic> json) {
     return LeaderboardItemModel(
       id: json['id'],
-      name: json['name'],
       score: json['score'],
-      avatar: json['avatar'],
+      userModel: UserModel.fromJson(json['userModel']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
       'score': score,
-      'avatar': avatar,
+      'userModel': userModel.toJson(),
     };
   }
 
   LeaderboardItem toLeaderboardItemEntity() {
     return LeaderboardItem(
-      name: name,
+      name: '${userModel.firstName} ${userModel.lastName}',
       score: score,
-      avatar: avatar,
     );
   }
 }

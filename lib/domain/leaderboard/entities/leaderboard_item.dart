@@ -6,6 +6,6 @@ class LeaderboardItem {
   LeaderboardItem({
     required this.name,
     required this.score,
-    required this.avatar,
+    this.avatar = '',
   });
 }
