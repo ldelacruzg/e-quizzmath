@@ -16,6 +16,7 @@ class _QuizQuestionActionsState extends State<QuizQuestionActions> {
 
   void _nextQuestion() {
     quizProvider.nextQuestion();
+    quizProvider.createAndAssignAQuestion();
     setState(() {
       isNextButtonVisible = false;
     });
@@ -69,6 +70,7 @@ class _QuizQuestionActionsState extends State<QuizQuestionActions> {
     }
 
     quizProvider.updateSelectedAnswer();
+    quizProvider.updateAnswerAssignedQuestion();
 
     setState(() {
       isNextButtonVisible = true;
@@ -105,6 +107,7 @@ class _QuizQuestionActionsState extends State<QuizQuestionActions> {
             child: FilledButton(
               onPressed: () {
                 quizProvider.endQuiz();
+                quizProvider.updateQuizFinished();
                 context.push('/quiz/result');
               },
               child: const Text('FINALIZAR'),

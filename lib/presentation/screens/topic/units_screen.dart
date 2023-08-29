@@ -1,11 +1,15 @@
+import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class UnitsScreen extends StatelessWidget {
   const UnitsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final quizProvider = context.watch<QuizProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Algebra Lineal'),
@@ -30,6 +34,8 @@ class UnitsScreen extends StatelessWidget {
                 PopupMenuItem(
                   child: const Text('Jugar'),
                   onTap: () {
+                    quizProvider.createQuiz();
+                    quizProvider.createAndAssignAQuestion();
                     context.push('/quiz');
                   },
                 ),

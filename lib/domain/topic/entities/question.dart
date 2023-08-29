@@ -15,6 +15,16 @@ class Question {
     required this.correctAnswer,
     required this.difficulty,
   });
+
+  toJson() {
+    return {
+      'id': id,
+      'question': question,
+      'options': options.map((option) => option.text).toList(),
+      'correctAnswer': correctAnswer,
+      'difficulty': difficulty.toString(),
+    };
+  }
 }
 
 class Option {
