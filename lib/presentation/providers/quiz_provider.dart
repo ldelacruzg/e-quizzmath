@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_quizzmath/domain/topic/entities/question.dart';
 import 'package:e_quizzmath/domain/topic/entities/quiz_timer.dart';
 import 'package:e_quizzmath/infrastructure/models/local_question_model.dart';
@@ -12,6 +13,18 @@ class QuizProvider with ChangeNotifier {
   List<Question> questions = [];
   QuizTimer quizTimer = QuizTimer();
   StreamSubscription<int>? _streamSubscription;
+
+  // Firebase properties
+  DocumentReference? _currentQuizRef;
+  String _quizId = '';
+  String _assignedQuestionId = '';
+  final _quizCollection = FirebaseFirestore.instance.collection('quizzes');
+  final _questionsCollection =
+      FirebaseFirestore.instance.collection('questions');
+  final _usersCollection = FirebaseFirestore.instance.collection('Users');
+  final _assignedQuestionsCollection =
+      FirebaseFirestore.instance.collection('assigned_questions');
+  final _unitsCollection = FirebaseFirestore.instance.collection('units');
 
   Question get currentQuestion => questions[currentQuestionIndex];
 
@@ -51,6 +64,12 @@ class QuizProvider with ChangeNotifier {
         .length;
 
     return correctAnswers * 2;
+  }
+
+  int get _getQuestionScore {
+    return currentQuestion.selectedAnswer == currentQuestion.correctAnswer
+        ? 2
+        : 0;
   }
 
   void reset() {
@@ -140,5 +159,63 @@ class QuizProvider with ChangeNotifier {
     this.questions.addAll(questions);
     initialLoading = false;
     notifyListeners();
+  }
+
+  /// ************************** FIREBASE *****************************
+  void createQuiz() async {
+    // TODO: load all questions
+
+    // Crea el quiz
+    final userReference = _usersCollection.doc('EFkiNDtnHDfqOMuoy7dp');
+
+    final request = await _quizCollection.add({
+      'userId': userReference,
+      'startDate': DateTime.now(),
+    });
+
+    _quizId = request.id;
+    _currentQuizRef = _quizCollection.doc(request.id);
+  }
+
+  void createAndAssignAQuestion() async {
+    // Se crea la pregunta
+    final unitReference = _unitsCollection.doc('NdMEdHaayFAvhCr4v5YV');
+    final question = await _questionsCollection.add({
+      ...currentQuestion.toJson(),
+      'unitId': unitReference,
+    });
+
+    // Asigna la pregunta al quiz
+    final questionRef = _questionsCollection.doc(question.id);
+    final assignedQuestion = await _assignedQuestionsCollection.add({
+      'quizId': _currentQuizRef,
+      'questionId': questionRef,
+      'date': DateTime.now(),
+    });
+
+    _assignedQuestionId = assignedQuestion.id;
+  }
+
+  void updateAnswerAssignedQuestion() async {
+    final assignedQuestionRef =
+        _assignedQuestionsCollection.doc(_assignedQuestionId);
+    Map<String, dynamic> docAssignedQuestion = {
+      'answer': currentQuestion.selectedAnswer,
+      'points': _getQuestionScore,
+    };
+
+    await assignedQuestionRef.update(docAssignedQuestion);
+  }
+
+  void updateQuizFinished() async {
+    final quizRef = _quizCollection.doc(_quizId);
+    Map<String, dynamic> docQuiz = {
+      'endDate': DateTime.now(),
+      'time': timer,
+      'points': totalExp,
+      'percentage': accurence,
+    };
+
+    await quizRef.update(docQuiz);
   }
 }
