@@ -143,10 +143,10 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                   firstName: controller.firstName.text.trim(),
                                   phone: controller.pone.text.trim(),
                                   email: controller.email.text.trim(),
-                                  password: controller.password.text.trim());
+                                  password: controller.password.text.trim()
+                              );
                               UserController.instance.createUser(users);
 
-                              UserController.instance.signUp(users.email.toString(),users.password.toString());
                               formaKey.currentState!.reset();
                               showDialog(
                                   context: context,

@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:e_quizzmath/infrastructure/controller/user_controller.dart';
+import 'package:e_quizzmath/presentation/screens/auth/login/auth_page.dart';
 import 'package:e_quizzmath/presentation/screens/screens.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +21,8 @@ class _LoginPageState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final formaKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -23,10 +30,7 @@ class _LoginPageState extends State<LoginScreen> {
     passwordController.dispose();
     super.dispose();
   }
-
-  final formaKey = GlobalKey<FormState>();
-  bool isLoading = false;
-
+  /*
   void SingIn() async {
     //loading
     if (formaKey.currentState!.validate()) {
@@ -40,6 +44,7 @@ class _LoginPageState extends State<LoginScreen> {
       print(passwordController.text + "hola");
       await _auth.signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
+
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -56,21 +61,32 @@ class _LoginPageState extends State<LoginScreen> {
       });
     }
   }
+*/
 
-  void _signInWithEmailAndPassword() async {
-    try {
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
+    Future<void> _signIn(String email, String password) async {
+      try {
+        final userCredential = await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        if (userCredential.user != null) {
+          final String userId = userCredential.user!.uid;
+          await _saveLoginId(userId);
+          Fluttertoast.showToast(msg: 'Exito iniciar session');
+          // Navegar a la pantalla de inicio (HomeScreen)
+          context.go('/home');
 
-      // El usuario ha iniciado sesión exitosamente
-      print('Usuario autenticado: ${userCredential.user?.email}');
-    } catch (e) {
-      // Error al autenticar al usuario
-      print('Error al autenticar: $e');
+        }
+      } catch (e) {
+        Fluttertoast.showToast(msg: 'Error al iniciar session');
+      }
     }
-  }
+
+    Future<void> _saveLoginId(String id) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('login_id', id);
+      print(id+"rey");
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -164,15 +180,14 @@ class _LoginPageState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 280),
                     ElevatedButton(
-                      onPressed: ()  {
+                      onPressed: ()   {
                         try {
-                          SingIn();
-
+                          if (formaKey.currentState!.validate()) {
+                            _signIn(emailController.text.toString(),passwordController.text.toString());
+                          }
                         } catch (e) {
-                          print('Error al autenticar: $e');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Error en el inicio de sesión')),
-                          );
+                          log('Error al autenticar: $e');
+
                         } finally {
                           setState(() {
                             isLoading = false;
