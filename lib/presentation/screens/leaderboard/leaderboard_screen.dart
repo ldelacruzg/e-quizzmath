@@ -64,18 +64,22 @@ class _LeaderboardView extends StatelessWidget {
             children: [
               _LeaderboardTopItem(
                 position: 2,
-                item: leaderboardProvider.leaderboard[1],
+                item: leaderboardProvider.leaderboard.length > 1
+                    ? leaderboardProvider.leaderboard[1]
+                    : LeaderboardItem(name: '', score: 0),
               ),
               const SizedBox(width: 10),
               _LeaderboardTopItem(
-                position: 1,
-                item: leaderboardProvider.leaderboard[0],
-              ),
+                  position: 1,
+                  item: leaderboardProvider.leaderboard.isNotEmpty
+                      ? leaderboardProvider.leaderboard[0]
+                      : LeaderboardItem(name: '', score: 0)),
               const SizedBox(width: 10),
               _LeaderboardTopItem(
-                position: 3,
-                item: leaderboardProvider.leaderboard[2],
-              ),
+                  position: 3,
+                  item: leaderboardProvider.leaderboard.length > 2
+                      ? leaderboardProvider.leaderboard[2]
+                      : LeaderboardItem(name: '', score: 0)),
             ],
           ),
         ),
@@ -93,7 +97,9 @@ class _LeaderboardView extends StatelessWidget {
               ),
             ),
             child: ListView.builder(
-              itemCount: leaderboardProvider.leaderboard.length - 3,
+              itemCount: leaderboardProvider.leaderboard.length > 3
+                  ? leaderboardProvider.leaderboard.length - 3
+                  : 0,
               itemBuilder: (context, index) {
                 final currIndex = index + 3;
                 return _LeaderboardNormalItem(
@@ -202,7 +208,11 @@ class _LeaderboardTopItem extends StatelessWidget {
           ),
           width: size.width * 0.23,
           height: size.width * 0.23,
-          child: RandomAvatar(item.name),
+          child: item.name.isEmpty
+              ? const CircleAvatar(
+                  backgroundColor: Colors.white,
+                )
+              : RandomAvatar(item.name),
         ),
         const SizedBox(height: 10),
         Text(

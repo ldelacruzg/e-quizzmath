@@ -1,6 +1,8 @@
+import 'package:e_quizzmath/presentation/providers/leaderboard_provider.dart';
 import 'package:e_quizzmath/presentation/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final leaderProvider = context.watch<LeaderboardProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('e-QuizzMath'),
@@ -35,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           if (index == 2) {
             context.go('/leaderboard');
+            leaderProvider.init();
           }
         },
         destinations: const [
