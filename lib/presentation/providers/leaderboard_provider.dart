@@ -55,16 +55,17 @@ class LeaderboardProvider with ChangeNotifier {
     return leaderboard;
   }
 
-  Future<QuerySnapshot> getLeaderboardByUser() async {
+  Future<DocumentReference> getCurrentUserLeaderboard() async {
     final leaderboardRef = await getCurrentLeaderboard();
     final userRef = collections[Collections.users]?.doc('EFkiNDtnHDfqOMuoy7dp');
 
     final leaderboard = await collections[Collections.userLeaderboard]!
         .where('leaderboardId', isEqualTo: leaderboardRef)
         .where('userId', isEqualTo: userRef)
+        .limit(1)
         .get();
 
-    return leaderboard;
+    return leaderboard.docs.first.reference;
   }
 
   Future<bool> get isCompeting async {

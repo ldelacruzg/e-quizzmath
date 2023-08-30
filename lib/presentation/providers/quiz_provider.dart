@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_quizzmath/config/firebase/collections_firebase.dart';
 import 'package:e_quizzmath/domain/topic/entities/question.dart';
 import 'package:e_quizzmath/domain/topic/entities/quiz_timer.dart';
 import 'package:e_quizzmath/infrastructure/models/local_question_model.dart';
@@ -18,13 +19,6 @@ class QuizProvider with ChangeNotifier {
   DocumentReference? _currentQuizRef;
   String _quizId = '';
   String _assignedQuestionId = '';
-  final _quizCollection = FirebaseFirestore.instance.collection('quizzes');
-  final _questionsCollection =
-      FirebaseFirestore.instance.collection('questions');
-  final _usersCollection = FirebaseFirestore.instance.collection('Users');
-  final _assignedQuestionsCollection =
-      FirebaseFirestore.instance.collection('assigned_questions');
-  final _unitsCollection = FirebaseFirestore.instance.collection('units');
 
   Question get currentQuestion => questions[currentQuestionIndex];
 
@@ -166,28 +160,32 @@ class QuizProvider with ChangeNotifier {
     // TODO: load all questions
 
     // Crea el quiz
-    final userReference = _usersCollection.doc('EFkiNDtnHDfqOMuoy7dp');
+    final userReference =
+        collections[Collections.users]!.doc('EFkiNDtnHDfqOMuoy7dp');
 
-    final request = await _quizCollection.add({
+    final request = await collections[Collections.quizzes]!.add({
       'userId': userReference,
       'startDate': DateTime.now(),
     });
 
     _quizId = request.id;
-    _currentQuizRef = _quizCollection.doc(request.id);
+    _currentQuizRef = collections[Collections.quizzes]!.doc(request.id);
   }
 
   void createAndAssignAQuestion() async {
     // Se crea la pregunta
-    final unitReference = _unitsCollection.doc('NdMEdHaayFAvhCr4v5YV');
-    final question = await _questionsCollection.add({
+    final unitReference =
+        collections[Collections.units]!.doc('NdMEdHaayFAvhCr4v5YV');
+
+    final question = await collections[Collections.questions]!.add({
       ...currentQuestion.toJson(),
       'unitId': unitReference,
     });
 
     // Asigna la pregunta al quiz
-    final questionRef = _questionsCollection.doc(question.id);
-    final assignedQuestion = await _assignedQuestionsCollection.add({
+    final questionRef = collections[Collections.questions]!.doc(question.id);
+    final assignedQuestion =
+        await collections[Collections.assignedQuestions]!.add({
       'quizId': _currentQuizRef,
       'questionId': questionRef,
       'date': DateTime.now(),
@@ -198,7 +196,7 @@ class QuizProvider with ChangeNotifier {
 
   void updateAnswerAssignedQuestion() async {
     final assignedQuestionRef =
-        _assignedQuestionsCollection.doc(_assignedQuestionId);
+        collections[Collections.assignedQuestions]!.doc(_assignedQuestionId);
     Map<String, dynamic> docAssignedQuestion = {
       'answer': currentQuestion.selectedAnswer,
       'points': _getQuestionScore,
@@ -208,7 +206,7 @@ class QuizProvider with ChangeNotifier {
   }
 
   void updateQuizFinished() async {
-    final quizRef = _quizCollection.doc(_quizId);
+    final quizRef = collections[Collections.quizzes]!.doc(_quizId);
     Map<String, dynamic> docQuiz = {
       'endDate': DateTime.now(),
       'time': timer,
@@ -217,5 +215,26 @@ class QuizProvider with ChangeNotifier {
     };
 
     await quizRef.update(docQuiz);
+  }
+
+  void updateScoreFinished(DocumentReference currentUserLeaderboard) async {
+    // actualizar el score
+    final doc = await currentUserLeaderboard.get();
+    final docUserLeaderboard = doc.data() as Map<String, dynamic>;
+    final score = docUserLeaderboard['score'] as int;
+    docUserLeaderboard['score'] = score + totalExp;
+    await currentUserLeaderboard.update(docUserLeaderboard);
+  }
+
+  void createNewScore(DocumentReference currentLeaderboard) async {
+    final userReference =
+        collections[Collections.users]!.doc('EFkiNDtnHDfqOMuoy7dp');
+
+    await collections[Collections.userLeaderboard]!.add({
+      'userId': userReference,
+      'leaderboardId': currentLeaderboard,
+      'score': totalExp,
+      'joinedDate': DateTime.now(),
+    });
   }
 }

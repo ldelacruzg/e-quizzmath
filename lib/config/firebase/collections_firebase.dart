@@ -4,6 +4,11 @@ enum Collections {
   users,
   leaderboards,
   userLeaderboard,
+  quizzes,
+  questions,
+  assignedQuestions,
+  units,
+  topics,
 }
 
 Map<Collections, CollectionReference> collections = {
@@ -12,4 +17,10 @@ Map<Collections, CollectionReference> collections = {
       FirebaseFirestore.instance.collection('leaderboards'),
   Collections.userLeaderboard:
       FirebaseFirestore.instance.collection('user_leaderboard'),
+  Collections.quizzes: FirebaseFirestore.instance.collection('quizzes'),
+  Collections.questions: FirebaseFirestore.instance.collection('questions'),
+  Collections.assignedQuestions:
+      FirebaseFirestore.instance.collection('assigned_questions'),
+  Collections.units: FirebaseFirestore.instance.collection('units'),
+  Collections.topics: FirebaseFirestore.instance.collection('topics'),
 };
