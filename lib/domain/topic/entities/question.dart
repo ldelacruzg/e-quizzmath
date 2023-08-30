@@ -16,13 +16,12 @@ class Question {
     required this.difficulty,
   });
 
-  toJson() {
+  Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'question': question,
       'options': options.map((option) => option.text).toList(),
       'correctAnswer': correctAnswer,
-      'difficulty': difficulty.toString(),
+      'difficulty': difficulty.name,
     };
   }
 }

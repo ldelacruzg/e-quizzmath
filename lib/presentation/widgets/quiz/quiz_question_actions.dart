@@ -1,3 +1,4 @@
+import 'package:e_quizzmath/presentation/providers/leaderboard_provider.dart';
 import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +14,7 @@ class QuizQuestionActions extends StatefulWidget {
 class _QuizQuestionActionsState extends State<QuizQuestionActions> {
   bool isNextButtonVisible = false;
   late QuizProvider quizProvider;
+  late LeaderboardProvider leaderboardProvider;
 
   void _nextQuestion() {
     quizProvider.nextQuestion();
@@ -77,9 +79,22 @@ class _QuizQuestionActionsState extends State<QuizQuestionActions> {
     });
   }
 
+  void _finishedQuiz() async {
+    quizProvider.endQuiz();
+    quizProvider.updateQuizFinished();
+    if (!(await leaderboardProvider.isCompeting)) {
+      quizProvider
+          .createNewScore(await leaderboardProvider.getCurrentLeaderboard());
+    } else {
+      quizProvider.updateScoreFinished(
+          await leaderboardProvider.getCurrentUserLeaderboard());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     quizProvider = context.watch<QuizProvider>();
+    leaderboardProvider = context.watch<LeaderboardProvider>();
 
     return Row(
       children: [
@@ -106,8 +121,7 @@ class _QuizQuestionActionsState extends State<QuizQuestionActions> {
           child: Expanded(
             child: FilledButton(
               onPressed: () {
-                quizProvider.endQuiz();
-                quizProvider.updateQuizFinished();
+                _finishedQuiz();
                 context.push('/quiz/result');
               },
               child: const Text('FINALIZAR'),
