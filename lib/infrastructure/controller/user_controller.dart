@@ -18,27 +18,63 @@ class UserController extends GetxController {
   late final Rx<User?> firebaseUser;
 
   Future<void> createUser(UserModel userm) async {
+    //crea la autenticacion
+    signUp(userm.email.toString(), userm.password.toString());
+    //obtiene las credenciales de autenticacion
+    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
+      email: userm.email.toString(),
+      password: userm.password.toString(),
+    );
+    //obtiene el id de la autenticacion
+    String userUID = authResult.user!.uid;
     await _db
         .collection("Users")
-        .add(userm.toJS())
-        .whenComplete(
-          () => Get.snackbar("Success", "Create",
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.grey,
-              colorText: Colors.grey),
-        )
+        .doc(userUID)
+        .set(userm.toJS())
+        .whenComplete(() => Get.snackbar("Success", "Create",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.grey,
+            colorText: Colors.grey))
         .catchError((error, stackTrace) {
       Get.snackbar("Error", "Nuevamente",
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.grey,
           colorText: Colors.red);
     });
-    Get.to(() => const OPTScreen());
+    Get.to(() => OPTScreen());
+    /*
+    await _db.collection("Users").add(userm.toJS()).whenComplete(() {
+      Get.snackbar("Success", "Create",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.grey,
+          colorText: Colors.grey);
+
+    }).catchError((error, stackTrace) {
+      Get.snackbar("Error", "Nuevamente",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.grey,
+          colorText: Colors.red);
+      print(error.toString());
+    });
+    Get.to(() => OPTScreen());
+    */
   }
 
   Future<void> signUp(String email, String password) async {
-    await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
+    try {
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      print('Registro exitoso');
+    } catch (e) {
+      print('Error en el registro: $e');
+    }
+  }
+
+  @override
+  void onReady() {
+    firebaseUser = Rx<User?>(_auth.currentUser);
+    firebaseUser.bindStream(_auth.userChanges());
+    ever(firebaseUser, _setInitialScreen);
   }
 
   Future<void> loginWithEmailAndPassword(String email, String password) async {
@@ -53,23 +89,26 @@ class UserController extends GetxController {
 
   Future<User?> signUpWithEmailAndPassword(
       String email, String password) async {
-    UserCredential credential = await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    return credential.user;
+    try {
+      UserCredential credential = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      return credential.user;
+    } catch (e) {
+      print("Some error occured");
+    }
+    return null;
   }
 
   Future<User?> signInWithEmailAndPassword(
       String email, String password) async {
-    UserCredential credential = await _auth.signInWithEmailAndPassword(
-        email: email, password: password);
-    return credential.user;
-  }
-
-  @override
-  void onReady() {
-    firebaseUser = Rx<User?>(_auth.currentUser);
-    firebaseUser.bindStream(_auth.userChanges());
-    ever(firebaseUser, _setInitialScreen);
+    try {
+      UserCredential credential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      return credential.user;
+    } catch (e) {
+      print("Some error occured");
+    }
+    return null;
   }
 }
 //login and email / passwrod

@@ -2,6 +2,7 @@ import 'package:e_quizzmath/infrastructure/controller/user_controller.dart';
 import 'package:e_quizzmath/infrastructure/models/user_model.dart';
 import 'package:e_quizzmath/presentation/screens/screens.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class CreateAccountPersonalInfoScreen extends StatelessWidget {
@@ -44,14 +45,16 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                     decoration: const InputDecoration(
                         fillColor: Color.fromRGBO(247, 238, 249, 2),
                         filled: true,
-                        prefixIcon: Icon(Icons.person_2_outlined, size: 25),
-                        labelText: "Nombres",
+                        prefixIcon: Icon(Icons.person_2_outlined, size: 20),
+                        labelText: "NOMBRES",
                         labelStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      return value!.isEmpty ? 'Ingrese sus nombres' : null;
+                      if (value!.isEmpty) {
+                        return 'Ingrese sus nombres';
+                      }
                     },
                   ),
                   TextFormField(
@@ -60,14 +63,16 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                     decoration: const InputDecoration(
                         fillColor: Color.fromRGBO(247, 238, 249, 2),
                         filled: true,
-                        prefixIcon: Icon(Icons.person, size: 25),
-                        labelText: "Apellidos",
+                        prefixIcon: Icon(Icons.person, size: 20),
+                        labelText: "APELLIDOS",
                         labelStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      return value!.isEmpty ? 'Ingrese sus apellidos' : null;
+                      if (value!.isEmpty) {
+                        return 'Ingrese sus apellidos';
+                      }
                     },
                   ),
                   TextFormField(
@@ -77,17 +82,12 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                     decoration: const InputDecoration(
                         fillColor: Color.fromRGBO(247, 238, 249, 2),
                         filled: true,
-                        prefixIcon: Icon(Icons.phone, size: 25),
-                        labelText: "Celular",
+                        prefixIcon: Icon(Icons.phone, size: 20),
+                        labelText: "CELULAR",
                         labelStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           color: Colors.black,
                         )),
-                    validator: (value) {
-                      return value!.isEmpty
-                          ? 'Ingrese un número de celular'
-                          : null;
-                    },
                   ),
                   TextFormField(
                     controller: controller.email,
@@ -96,31 +96,39 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                     decoration: const InputDecoration(
                         fillColor: Color.fromRGBO(247, 238, 249, 2),
                         filled: true,
-                        prefixIcon: Icon(Icons.email, size: 25),
-                        labelText: "Email",
+                        prefixIcon: Icon(Icons.email, size: 20),
+                        labelText: "E-MAIL",
                         labelStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      return value!.isEmpty ? 'Ingrese un email' : null;
+                      if (value!.isEmpty) {
+                        return 'Ingrese un email';
+                      }
                     },
                   ),
                   TextFormField(
                     obscureText: true,
                     controller: controller.password,
-                    maxLength: 10,
+                    maxLength: 15,
                     decoration: const InputDecoration(
                         fillColor: Color.fromRGBO(247, 238, 249, 2),
                         filled: true,
-                        prefixIcon: Icon(Icons.password, size: 25),
-                        labelText: "Contraseña",
+                        prefixIcon: Icon(Icons.password, size: 20),
+                        labelText: "CONTRASEÑA",
                         labelStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 15,
                           color: Colors.black,
                         )),
                     validator: (value) {
-                      return value!.isEmpty ? 'Ingrese una contraseña' : null;
+                      if (value!.isEmpty) {
+                        return 'Ingrese una contraseña';
+                      }
+                      if (value.length < 9) {
+                        return 'La contraseña debe tener al menos 9 caracteres';
+                      }
+                      return null; // Retorna null si la validación es exitosa
                     },
                   ),
                   const SizedBox(height: 10),
@@ -138,25 +146,24 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                   password: controller.password.text.trim());
                               UserController.instance.createUser(users);
 
-                              UserController.instance.signUp(
-                                  users.email.toString(),
-                                  users.password.toString());
                               formaKey.currentState!.reset();
                               showDialog(
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: const Text('Cuenta creada'),
+                                      title: const Text('Cuenta creada ✅'),
                                       content: const Text(
                                           'Se ha creado correctamente su usuario'),
                                       actions: [
-                                        FloatingActionButton(
+                                        TextButton(
                                           onPressed: () {
+                                            Navigator.of(context).pop();
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const LoginScreen()),
+                                                builder: (context) =>
+                                                    const LoginScreen(),
+                                              ),
                                             );
                                           },
                                           child: const Text('Aceptar'),
@@ -169,16 +176,16 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                   context: context,
                                   builder: (context) {
                                     return AlertDialog(
-                                      title: const Text('Alerta..! 🚧'),
+                                      title: const Text('Alerta 🚧'),
                                       content: const Text(
-                                          'Se han encontrado campos vacios'),
+                                          'Se han encontrado campos inválidos'),
                                       actions: [
-                                        FloatingActionButton(
+                                        TextButton(
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
-                                          child: const Text('Aceptar'),
-                                        ),
+                                          child: Text('Aceptar'),
+                                        )
                                       ],
                                     );
                                   });
