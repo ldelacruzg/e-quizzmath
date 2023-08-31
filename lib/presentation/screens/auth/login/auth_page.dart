@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:e_quizzmath/infrastructure/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +14,30 @@ class SignUpFailure implements Exception {}
 class LogInWithEmailAndPasswordFailure implements Exception {}
 
 // Cuando ocurre un error con el login de google
-class LogInWithGoogleFailure implements Exception {}
+class LogInWithGoogleFailure implements Exception {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  Future<UserCredential?> signUpWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
+      if (googleSignInAccount != null) {
+        final GoogleSignInAuthentication googleSignInAuth = await googleSignInAccount.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuth.accessToken,
+          idToken: googleSignInAuth.idToken,
+        );
+        return await _auth.signInWithCredential(credential);
+      }
+    } catch (error) {
+      print("Error al crear cuenta con Google: $error");
+    }
+    return null;
+  }
+
+
+
+}
 
 // Cuando ocurre un error cuando cerramos sesion
 class LogOutFailure implements Exception {}

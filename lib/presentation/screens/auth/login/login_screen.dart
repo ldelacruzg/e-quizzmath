@@ -1,13 +1,12 @@
 import 'dart:developer';
 
-import 'package:e_quizzmath/infrastructure/controller/user_controller.dart';
-import 'package:e_quizzmath/presentation/screens/auth/login/auth_page.dart';
 import 'package:e_quizzmath/presentation/screens/screens.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'auth_page.dart';
 import 'package:go_router/go_router.dart';
-import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,10 +18,14 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginPageState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final LogInWithGoogleFailure googlevariant = LogInWithGoogleFailure();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final formaKey = GlobalKey<FormState>();
   bool isLoading = false;
+  bool showPassword = false;
 
   @override
   void dispose() {
@@ -30,6 +33,7 @@ class _LoginPageState extends State<LoginScreen> {
     passwordController.dispose();
     super.dispose();
   }
+
   /*
   void SingIn() async {
     //loading
@@ -63,36 +67,36 @@ class _LoginPageState extends State<LoginScreen> {
   }
 */
 
-    Future<void> _signIn(String email, String password) async {
-      try {
-        final userCredential = await _auth.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        if (userCredential.user != null) {
-          final String userId = userCredential.user!.uid;
-          await _saveLoginId(userId);
-          Fluttertoast.showToast(msg: 'Exito iniciar session');
-          // Navegar a la pantalla de inicio (HomeScreen)
-          context.go('/home');
-
-        }
-      } catch (e) {
-        Fluttertoast.showToast(msg: 'Error al iniciar session');
+  Future<void> _signIn(String email, String password) async {
+    try {
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      if (userCredential.user != null) {
+        final String userId = userCredential.user!.uid;
+        await _saveLoginId(userId);
+        Fluttertoast.showToast(msg: 'Exito iniciar session');
+        // Navegar a la pantalla de inicio (HomeScreen)
+        context.go('/home');
       }
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Error al iniciar session');
     }
+  }
 
-    Future<void> _saveLoginId(String id) async {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('login_id', id);
-      print(id+"rey");
-    }
+  Future<void> _saveLoginId(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('login_id', id);
+    print(id + "rey");
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
+          appBar: AppBar(),
           body: Padding(
             padding: const EdgeInsets.all(25),
             child: SingleChildScrollView(
@@ -100,22 +104,7 @@ class _LoginPageState extends State<LoginScreen> {
                 key: formaKey,
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            size: 30,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          onPressed: () {
-                            context.push("/");
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 13),
+
                     const Align(
                       alignment: Alignment.topLeft,
                       child: Text(
@@ -129,6 +118,7 @@ class _LoginPageState extends State<LoginScreen> {
                     const SizedBox(height: 5),
                     TextFormField(
                       controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
                       onSaved: (value) {
                         emailController.text = value!;
                       },
@@ -152,12 +142,24 @@ class _LoginPageState extends State<LoginScreen> {
                       onSaved: (value) {
                         passwordController.text = value!;
                       },
-                      obscureText: true,
+                      obscureText: !showPassword,
                       style: const TextStyle(
                         color: Colors.black,
                         fontSize: 15,
                       ),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  showPassword = !showPassword;
+                                });
+                              },
+                              icon: Icon(
+                                showPassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.grey,
+                              )),
                           fillColor: Color.fromRGBO(247, 238, 249, 2),
                           filled: true,
                           prefixIcon: Icon(Icons.password_outlined, size: 25),
@@ -180,14 +182,17 @@ class _LoginPageState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 280),
                     ElevatedButton(
-                      onPressed: ()   {
+                      onPressed: () {
                         try {
                           if (formaKey.currentState!.validate()) {
-                            _signIn(emailController.text.toString(),passwordController.text.toString());
+                            setState(() {
+                              isLoading = true; // Activar el indicador de carga
+                            });
+                            _signIn(emailController.text.toString(),
+                                passwordController.text.toString());
                           }
                         } catch (e) {
                           log('Error al autenticar: $e');
-
                         } finally {
                           setState(() {
                             isLoading = false;
