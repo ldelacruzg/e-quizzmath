@@ -6,6 +6,7 @@ import 'package:e_quizzmath/domain/topic/entities/question.dart';
 import 'package:e_quizzmath/domain/topic/entities/quiz_timer.dart';
 import 'package:e_quizzmath/infrastructure/models/local_question_model.dart';
 import 'package:e_quizzmath/shared/data/local_questions.dart';
+import 'package:e_quizzmath/shared/functions/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -147,8 +148,10 @@ class QuizProvider with ChangeNotifier {
   void loadQuestions() async {
     //await Future.delayed(const Duration(seconds: 2));
     this.questions.clear();
-    final List<Question> questions = localQuestions
-        .map((e) => LocalQuestionModel.fromJson(e).toQuestionEntity())
+    final questionIndexes = Funtions.getRandomItems(5, localQuestions.length);
+    final questions = questionIndexes
+        .map((index) => LocalQuestionModel.fromJson(localQuestions[index])
+            .toQuestionEntity())
         .toList();
 
     this.questions.addAll(questions);
