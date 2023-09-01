@@ -5,6 +5,7 @@ import 'package:e_quizzmath/domain/leaderboard/entities/leaderboard.dart';
 import 'package:e_quizzmath/domain/leaderboard/entities/leaderboard_item.dart';
 import 'package:e_quizzmath/infrastructure/models/leaderboard_item_model.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LeaderboardProvider with ChangeNotifier {
   bool isLoading = true;
@@ -56,8 +57,10 @@ class LeaderboardProvider with ChangeNotifier {
   }
 
   Future<DocumentReference> getCurrentUserLeaderboard() async {
+    final prefs = await SharedPreferences.getInstance();
     final leaderboardRef = await getCurrentLeaderboard();
-    final userRef = collections[Collections.users]?.doc('EFkiNDtnHDfqOMuoy7dp');
+    final userRef =
+        collections[Collections.users]?.doc(prefs.getString('login_id'));
 
     final leaderboard = await collections[Collections.userLeaderboard]!
         .where('leaderboardId', isEqualTo: leaderboardRef)
@@ -69,8 +72,10 @@ class LeaderboardProvider with ChangeNotifier {
   }
 
   Future<bool> get isCompeting async {
+    final prefs = await SharedPreferences.getInstance();
     // User
-    final userRef = collections[Collections.users]?.doc('EFkiNDtnHDfqOMuoy7dp');
+    final userRef =
+        collections[Collections.users]?.doc(prefs.getString('login_id'));
 
     // obtener el actual leaderboard
     final leaderboardRef = await getCurrentLeaderboard();

@@ -215,9 +215,20 @@ class _LeaderboardTopItem extends StatelessWidget {
               : RandomAvatar(item.name),
         ),
         const SizedBox(height: 10),
-        Text(
-          item.name,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        SizedBox(
+          width: size.width * 0.25,
+          child: Align(
+            child: Text(
+              item.name,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis,
+              ),
+              maxLines: 2,
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
         const SizedBox(height: 10),
         Container(

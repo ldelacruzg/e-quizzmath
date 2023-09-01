@@ -7,6 +7,7 @@ import 'package:e_quizzmath/domain/topic/entities/quiz_timer.dart';
 import 'package:e_quizzmath/infrastructure/models/local_question_model.dart';
 import 'package:e_quizzmath/shared/data/local_questions.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QuizProvider with ChangeNotifier {
   bool initialLoading = true;
@@ -160,8 +161,9 @@ class QuizProvider with ChangeNotifier {
     // TODO: load all questions
 
     // Crea el quiz
+    final prefs = await SharedPreferences.getInstance();
     final userReference =
-        collections[Collections.users]!.doc('EFkiNDtnHDfqOMuoy7dp');
+        collections[Collections.users]!.doc(prefs.getString('login_id'));
 
     final request = await collections[Collections.quizzes]!.add({
       'userId': userReference,
@@ -227,8 +229,9 @@ class QuizProvider with ChangeNotifier {
   }
 
   void createNewScore(DocumentReference currentLeaderboard) async {
+    final prefs = await SharedPreferences.getInstance();
     final userReference =
-        collections[Collections.users]!.doc('EFkiNDtnHDfqOMuoy7dp');
+        collections[Collections.users]!.doc(prefs.getString('login_id'));
 
     await collections[Collections.userLeaderboard]!.add({
       'userId': userReference,
