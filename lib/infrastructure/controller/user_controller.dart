@@ -35,7 +35,6 @@ class UserController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.grey,
           colorText: Colors.red);
-      print(error.toString());
     });
     Get.to(() => OPTScreen());
   }
@@ -56,10 +55,7 @@ class UserController extends GetxController {
     ever(firebaseUser, _setInitialScreen);
   }
   Future<void> loginWithEmailAndPassword(String email, String password) async {
-    try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException catch (e) {
-    } catch (_) {}
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   _setInitialScreen(User? user) {

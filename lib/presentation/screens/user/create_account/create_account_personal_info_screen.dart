@@ -167,7 +167,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                                       const LoginScreen()),
                                             );
                                           },
-                                          child: Text('Aceptar'),
+                                          child: const Text('Aceptar'),
                                         ),
                                       ],
                                     );
