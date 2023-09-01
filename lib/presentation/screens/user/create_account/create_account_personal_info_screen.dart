@@ -2,7 +2,6 @@ import 'package:e_quizzmath/infrastructure/controller/user_controller.dart';
 import 'package:e_quizzmath/infrastructure/models/user_model.dart';
 import 'package:e_quizzmath/presentation/screens/screens.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class CreateAccountPersonalInfoScreen extends StatelessWidget {
@@ -11,6 +10,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(UserController());
+    final UserController userController = UserController();
     final formaKey = GlobalKey<FormState>();
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -55,6 +55,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                       if (value!.isEmpty) {
                         return 'Ingrese sus nombres';
                       }
+                      return null;
                     },
                   ),
                   TextFormField(
@@ -73,6 +74,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                       if (value!.isEmpty) {
                         return 'Ingrese sus apellidos';
                       }
+                      return null;
                     },
                   ),
                   TextFormField(
@@ -105,7 +107,10 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Ingrese un email';
+                      }if(!userController.isValidEmail(controller.email.text.toString())){
+                        return 'Ingrese un email válido';
                       }
+                      return null;
                     },
                   ),
                   TextFormField(
@@ -144,7 +149,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                   phone: controller.pone.text.trim(),
                                   email: controller.email.text.trim(),
                                   password: controller.password.text.trim());
-                              UserController.instance.createUser(users);
+                              userController.createUser(users);
 
                               formaKey.currentState!.reset();
                               showDialog(
@@ -184,7 +189,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
-                                          child: Text('Aceptar'),
+                                          child: const Text('Aceptar'),
                                         )
                                       ],
                                     );

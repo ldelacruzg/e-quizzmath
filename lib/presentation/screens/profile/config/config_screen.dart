@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_quizzmath/infrastructure/models/user_model.dart';
+import 'package:e_quizzmath/presentation/screens/profile/personal_information/personal_information_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfigScreen extends StatefulWidget {
@@ -13,149 +12,143 @@ class ConfigScreen extends StatefulWidget {
 }
 
 class _ConfigScreenState extends State<ConfigScreen> {
-// Controladores de edición para los campos
-  TextEditingController nombresController = TextEditingController();
-  TextEditingController apellidosController = TextEditingController();
-  TextEditingController correoController = TextEditingController();
-  TextEditingController telefonoController = TextEditingController();
-
-  // Bandera para habilitar o deshabilitar la edición
-  bool isEditing = false;
-  // Función para alternar entre edición y visualización
-  void toggleEdit() {
-    setState(() {
-      if (isEditing) {
-        saveChanges();
-
-      }
-      isEditing = !isEditing;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Cargar la información del usuario al iniciar la pantalla
-    loadUserInfo();
-  }
-
-  Future<void> loadUserInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    String userId = prefs.getString('login_id') ?? '';
-    DocumentSnapshot documentSnapshot;
-    documentSnapshot = await FirebaseFirestore.instance
-        .collection('Users')
-        .doc(userId)
-        .get()
-        .then((value) => documentSnapshot = value);
-    if (documentSnapshot != null && documentSnapshot.exists) {
-      setState(() {
-        nombresController.text = documentSnapshot['FullName'];
-        apellidosController.text = documentSnapshot['LastName'];
-        correoController.text = documentSnapshot['email'];
-        telefonoController.text = documentSnapshot['phone'];
-      });
-    } else {
-      // El documento no existe en Firestore, maneja este caso según tus necesidades
-    }
-  }
-  Future<void>  saveChanges() async {
-    final prefs = await SharedPreferences.getInstance();
-    String userId = prefs.getString('login_id') ?? '';
-    try{
-
-      await FirebaseFirestore.instance.collection('Users').doc(userId).update({
-        'FullName': nombresController.text.toString(),
-        'LastName': apellidosController.text.toString(),
-        'email': correoController.text.toString(),
-        'phone': telefonoController.text.toString(),
-      });
-
-      Fluttertoast.showToast(msg: apellidosController.text.toString() +nombresController.text.toString());
-    }catch(e){
-      Fluttertoast.showToast(msg: e.toString());
-    }
-
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(30),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: ListView(
-            children: [
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 130,
-                      height: 135,
-                      decoration: BoxDecoration(
-                          border: Border.all(width: 5, color: Colors.white),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 5,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1))
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: AssetImage('assets/images/welcome_messages/user.png'))),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                    labelText: "Nombres",
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: nombresController.text.toString(),
-                    hintStyle: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        )),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  labelText: "Apellidos",
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: apellidosController.text.toString(),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: correoController.text.toString(),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  labelText: "Phone",
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: telefonoController.text.toString(),
-                ),
-              ),
-
-            ],
-          ),
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Configuración de perfil'),
         ),
-      ),
-    );
+        body: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.04,
+                // Espacio horizontal del 4% del ancho de pantalla
+                vertical: MediaQuery.of(context).size.width *
+                    0.02, // Espacio vertical del 2% del ancho de pantalla
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.person, // Tu icono
+                    size: 30, // Tamaño del icono
+                    color: Colors.amber, // Color del icono
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width *
+                        0.02, // Espacio del 2% del ancho de pantalla
+                  ),
+                  const Text(
+                    "Configuración", // Tu texto
+                    style: TextStyle(
+                      fontSize: 18, // Tamaño de fuente del texto
+                      fontWeight: FontWeight
+                          .bold, // Estilo de fuente (puedes ajustarlo)
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.4,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_forward),
+                    // Icono del IconButton
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const PersonalInformationScreen()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.04,
+                // Espacio horizontal del 4% del ancho de pantalla
+                vertical: MediaQuery.of(context).size.width *
+                    0.02, // Espacio vertical del 2% del ancho de pantalla
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.info, // Tu icono
+                    size: 30, // Tamaño del icono
+                    color: Colors.purple, // Color del icono
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width *
+                        0.02, // Espacio del 2% del ancho de pantalla
+                  ),
+                  const Text(
+                    "Sobre e-QuizzMath", // Tu texto
+                    style: TextStyle(
+                      fontSize: 18, // Tamaño de fuente del texto
+                      fontWeight: FontWeight
+                          .bold, // Estilo de fuente (puedes ajustarlo)
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.29,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add_circle), // Icono del IconButton
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.04,
+                // Espacio horizontal del 4% del ancho de pantalla
+                vertical: MediaQuery.of(context).size.width *
+                    0.02, // Espacio vertical del 2% del ancho de pantalla
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.send_to_mobile_sharp, // Tu icono
+                    size: 30, // Tamaño del icono
+                    color: Colors.deepOrangeAccent, // Color del icono
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width *
+                        0.02, // Espacio del 2% del ancho de pantalla
+                  ),
+                  const Text(
+                    "Cerrar Sessión", // Tu texto
+                    style: TextStyle(
+                      fontSize: 18, // Tamaño de fuente del texto
+                      fontWeight: FontWeight
+                          .bold, // Estilo de fuente (puedes ajustarlo)
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.38,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_ios),
+                    // Icono del IconButton
+                    onPressed: () async {
+                      try {
+                        await FirebaseAuth.instance.signOut();
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.remove('userId');
+                        context.go('/login');
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        ));
   }
 }

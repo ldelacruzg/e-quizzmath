@@ -95,9 +95,7 @@ class CreateNewPasswordScreen extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 40),
-                        primary: Colors.deepPurpleAccent,
-                        onPrimary: Colors.white),
+                        foregroundColor: Colors.white, backgroundColor: Colors.deepPurpleAccent, minimumSize: const Size(double.infinity, 40)),
                     child: const Text('Continuar'),
                   ),
                 ],
