@@ -82,78 +82,26 @@ class _ConfigScreenState extends State<ConfigScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(30),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: ListView(
-            children: [
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 130,
-                      height: 135,
-                      decoration: BoxDecoration(
-                          border: Border.all(width: 5, color: Colors.white),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 5,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1))
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: AssetImage('assets/images/welcome_messages/user.png'))),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                    labelText: "Nombres",
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    hintText: nombresController.text.toString(),
-                    hintStyle: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        )),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  labelText: "Apellidos",
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: apellidosController.text.toString(),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: correoController.text.toString(),
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  labelText: "Phone",
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: telefonoController.text.toString(),
-                ),
-              ),
-
-            ],
-          ),
+      appBar: AppBar(
+        title: const Text('Informacion personal'),
+      ),
+      body:Container(
+        child:  ListView(
+         children: [
+           Center(
+             child: Stack(
+               children: [
+                  Row(
+                   children: [
+                     Icon(Icons.person,color: Colors.amber,size: 20,),
+                     Text('Configuracion',),
+                     IconButton(onPressed: (){}, icon:Icon(Icons.navigate_next))
+                   ],
+                 )
+               ],
+             ),
+           )
+         ],
         ),
       ),
     );
