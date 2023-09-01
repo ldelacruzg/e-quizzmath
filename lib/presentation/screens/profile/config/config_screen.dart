@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_quizzmath/infrastructure/models/user_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfigScreen extends StatefulWidget {
@@ -48,7 +47,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
         .doc(userId)
         .get()
         .then((value) => documentSnapshot = value);
-    if (documentSnapshot != null && documentSnapshot.exists) {
+    if (documentSnapshot.exists) {
       setState(() {
         nombresController.text = documentSnapshot['FullName'];
         apellidosController.text = documentSnapshot['LastName'];
@@ -81,50 +80,56 @@ class _ConfigScreenState extends State<ConfigScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Configuración de perfil'),
+      ),
       body: Container(
-        padding: EdgeInsets.all(30),
+        padding: const EdgeInsets.all(30),
         child: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
           },
-          child: ListView(
+          child: Column(
             children: [
               Center(
                 child: Stack(
                   children: [
                     Container(
-                      width: 130,
-                      height: 135,
+                      // Establece la decoración del contenedor
                       decoration: BoxDecoration(
-                          border: Border.all(width: 5, color: Colors.white),
-                          boxShadow: [
-                            BoxShadow(
-                                spreadRadius: 5,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1))
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: AssetImage('assets/images/welcome_messages/user.png'))),
+                        borderRadius: BorderRadius.circular(150),
+                        border: Border.all(
+                          color: Colors.black12,
+                          width: 5,
+                        ),
+                      ),
+                      // Define el ancho del contenedor como el 35% del ancho de la pantalla
+                      width: size.width * 0.35,
+                      // Define la altura del contenedor como el 35% del ancho de la pantalla
+                      height: size.width * 0.35,
+                      // El contenido del contenedor es un widget personalizado llamado RandomAvatar
+                      child: RandomAvatar("${nombresController.text} ${apellidosController.text}"), // Pasa el nombre como parámetro
                     ),
+
                   ],
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 enabled: isEditing,
                 decoration: InputDecoration(
                     labelText: "Nombres",
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: nombresController.text.toString(),
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         )),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 enabled: isEditing,
                 decoration: InputDecoration(
@@ -133,7 +138,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   hintText: apellidosController.text.toString(),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 enabled: isEditing,
                 decoration: InputDecoration(
@@ -142,7 +147,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   hintText: correoController.text.toString(),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               TextField(
                 enabled: isEditing,
                 decoration: InputDecoration(
@@ -151,7 +156,6 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   hintText: telefonoController.text.toString(),
                 ),
               ),
-
             ],
           ),
         ),

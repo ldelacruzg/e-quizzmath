@@ -4,9 +4,7 @@ import 'package:e_quizzmath/presentation/screens/screens.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'auth_page.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,11 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginPageState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final LogInWithGoogleFailure googlevariant = LogInWithGoogleFailure();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
   final formaKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool showPassword = false;
@@ -75,18 +70,17 @@ class _LoginPageState extends State<LoginScreen> {
         final String userId = userCredential.user!.uid;
         await _saveLoginId(userId);
         Fluttertoast.showToast(msg: 'Exito iniciar session');
-        // Navegar a la pantalla de inicio (HomeScreen)
         context.go('/home');
       }
+
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error al iniciar session');
+      Fluttertoast.showToast(msg: 'Error al iniciar session verifique los campos');
     }
   }
 
   Future<void> _saveLoginId(String id) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('login_id', id);
-    print(id + "rey");
   }
 
   @override
@@ -127,7 +121,7 @@ class _LoginPageState extends State<LoginScreen> {
                           fillColor: Color.fromRGBO(247, 238, 249, 2),
                           filled: true,
                           prefixIcon: Icon(Icons.email_outlined, size: 25),
-                          labelText: "Correo electrónico",
+                          labelText: "CORREO ELECTRÓNICO",
                           labelStyle: TextStyle(
                             fontSize: 15,
                             color: Colors.black,
@@ -157,11 +151,11 @@ class _LoginPageState extends State<LoginScreen> {
                                     : Icons.visibility_off,
                                 color: Colors.grey,
                               )),
-                          fillColor: Color.fromRGBO(247, 238, 249, 2),
+                          fillColor: const Color.fromRGBO(247, 238, 249, 2),
                           filled: true,
-                          prefixIcon: Icon(Icons.password_outlined, size: 25),
-                          labelText: "Contraseña",
-                          labelStyle: TextStyle(
+                          prefixIcon: const Icon(Icons.password_outlined, size: 25),
+                          labelText: "CONTRASEÑA",
+                          labelStyle: const TextStyle(
                             fontSize: 15,
                             color: Colors.black,
                           )),
@@ -187,6 +181,9 @@ class _LoginPageState extends State<LoginScreen> {
                             });
                             _signIn(emailController.text.toString(),
                                 passwordController.text.toString());
+
+
+
                           }
                         } catch (e) {
                           log('Error al autenticar: $e');
@@ -200,7 +197,7 @@ class _LoginPageState extends State<LoginScreen> {
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.deepPurpleAccent,
                           minimumSize: const Size(double.infinity, 40)),
-                      child: Text(isLoading ? 'Cargando...' : 'Iniciar Sesión'),
+                      child: Text(isLoading ? 'CARGANDO...' : 'INICIAR SESSIÓN'),
                     ),
                   ],
                 ),
