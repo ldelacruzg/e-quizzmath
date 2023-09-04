@@ -9,7 +9,6 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorSchema = Theme.of(context).colorScheme;
     final controller = Get.put(UserController());
     final UserController userController = UserController();
     final formaKey = GlobalKey<FormState>();

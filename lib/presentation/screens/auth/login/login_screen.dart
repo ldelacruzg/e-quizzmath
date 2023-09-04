@@ -76,8 +76,6 @@ class _LoginPageState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorSchema = Theme.of(context).colorScheme;
-
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
