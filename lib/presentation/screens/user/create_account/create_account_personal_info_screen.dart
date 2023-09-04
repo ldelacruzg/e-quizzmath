@@ -9,205 +9,201 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorSchema = Theme.of(context).colorScheme;
     final controller = Get.put(UserController());
     final UserController userController = UserController();
     final formaKey = GlobalKey<FormState>();
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Padding(
-          padding: const EdgeInsets.all(15),
-          child: SingleChildScrollView(
-            child: Form(
-              key: formaKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      appBar: AppBar(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
                 children: [
+                  // Text
                   const Text(
                     "Crear una cuenta 👌",
                     style: TextStyle(
-                      fontSize: 25,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 35),
                   const Text(
                     "Complete su perfil. No se preocupe, sus datos permanecerán privados y sólo usted podrá verlos.",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w100,
-                      color: Colors.black,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 35),
+
+                  // Create account form
+                  Form(
+                    key: formaKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Nombre
+                        TextFormField(
+                          controller: controller.firstName,
+                          maxLength: 30,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.person_2_outlined),
+                            labelText: "Nombres",
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Ingrese sus nombres';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Apellidos
+                        TextFormField(
+                          controller: controller.lastName,
+                          maxLength: 30,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.person),
+                            labelText: "Apellidos",
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Ingrese sus apellidos';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Celular
+                        TextFormField(
+                          controller: controller.pone,
+                          maxLength: 10,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.phone),
+                            labelText: "Teléfono",
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Email
+                        TextFormField(
+                          controller: controller.email,
+                          maxLength: 30,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.email),
+                            labelText: "Correo electrónico",
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Ingrese un email';
+                            }
+                            if (!userController.isValidEmail(
+                                controller.email.text.toString())) {
+                              return 'Ingrese un email válido';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Contraseña
+                        TextFormField(
+                          obscureText: true,
+                          controller: controller.password,
+                          maxLength: 15,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.password),
+                            labelText: "Contraseña",
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Ingrese una contraseña';
+                            }
+                            if (value.length < 9) {
+                              return 'La contraseña debe tener al menos 9 caracteres';
+                            }
+                            return null; // Retorna null si la validación es exitosa
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                      ],
                     ),
                   ),
-                  TextFormField(
-                    controller: controller.firstName,
-                    maxLength: 30,
-                    decoration: const InputDecoration(
-                        fillColor: Color.fromRGBO(247, 238, 249, 2),
-                        filled: true,
-                        prefixIcon: Icon(Icons.person_2_outlined, size: 20),
-                        labelText: "NOMBRES",
-                        labelStyle: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                        )),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese sus nombres';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: controller.lastName,
-                    maxLength: 30,
-                    decoration: const InputDecoration(
-                        fillColor: Color.fromRGBO(247, 238, 249, 2),
-                        filled: true,
-                        prefixIcon: Icon(Icons.person, size: 20),
-                        labelText: "APELLIDOS",
-                        labelStyle: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                        )),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese sus apellidos';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: controller.pone,
-                    maxLength: 10,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                        fillColor: Color.fromRGBO(247, 238, 249, 2),
-                        filled: true,
-                        prefixIcon: Icon(Icons.phone, size: 20),
-                        labelText: "CELULAR",
-                        labelStyle: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                        )),
-                  ),
-                  TextFormField(
-                    controller: controller.email,
-                    maxLength: 30,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                        fillColor: Color.fromRGBO(247, 238, 249, 2),
-                        filled: true,
-                        prefixIcon: Icon(Icons.email, size: 20),
-                        labelText: "E-MAIL",
-                        labelStyle: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                        )),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese un email';
-                      }if(!userController.isValidEmail(controller.email.text.toString())){
-                        return 'Ingrese un email válido';
-                      }
-                      return null;
-                    },
-                  ),
-                  TextFormField(
-                    obscureText: true,
-                    controller: controller.password,
-                    maxLength: 15,
-                    decoration: const InputDecoration(
-                        fillColor: Color.fromRGBO(247, 238, 249, 2),
-                        filled: true,
-                        prefixIcon: Icon(Icons.password, size: 20),
-                        labelText: "CONTRASEÑA",
-                        labelStyle: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                        )),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ingrese una contraseña';
-                      }
-                      if (value.length < 9) {
-                        return 'La contraseña debe tener al menos 9 caracteres';
-                      }
-                      return null; // Retorna null si la validación es exitosa
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (formaKey.currentState!.validate()) {
-                              final users = UserModel(
-                                  lastName: controller.lastName.text.trim(),
-                                  firstName: controller.firstName.text.trim(),
-                                  phone: controller.pone.text.trim(),
-                                  email: controller.email.text.trim(),
-                                  password: controller.password.text.trim());
-                              userController.createUser(users);
-
-                              formaKey.currentState!.reset();
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text('Cuenta creada ✅'),
-                                      content: const Text(
-                                          'Se ha creado correctamente su usuario'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const LoginScreen(),
-                                              ),
-                                            );
-                                          },
-                                          child: const Text('Aceptar'),
-                                        ),
-                                      ],
-                                    );
-                                  });
-                            } else {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: const Text('Alerta 🚧'),
-                                      content: const Text(
-                                          'Se han encontrado campos inválidos'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('Aceptar'),
-                                        )
-                                      ],
-                                    );
-                                  });
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.deepPurpleAccent,
-                          ),
-                          child: const Text('Aceptar'),
-                        ),
-                      )
-                    ],
-                  )
                 ],
               ),
-            ),
+
+              // Button
+              Row(
+                children: [
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: () {
+                        if (formaKey.currentState!.validate()) {
+                          final users = UserModel(
+                              lastName: controller.lastName.text.trim(),
+                              firstName: controller.firstName.text.trim(),
+                              phone: controller.pone.text.trim(),
+                              email: controller.email.text.trim(),
+                              password: controller.password.text.trim());
+                          userController.createUser(users);
+
+                          formaKey.currentState!.reset();
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Cuenta creada ✅'),
+                                  content: const Text(
+                                      'Se ha creado correctamente su usuario'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginScreen(),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Aceptar'),
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text('Alerta 🚧'),
+                                  content: const Text(
+                                      'Se han encontrado campos inválidos'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Aceptar'),
+                                    )
+                                  ],
+                                );
+                              });
+                        }
+                      },
+                      child: const Text('REGISTRASE'),
+                    ),
+                  ),
+                ],
+              )
+            ],
           ),
         ),
       ),

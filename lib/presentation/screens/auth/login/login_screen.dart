@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:e_quizzmath/presentation/screens/screens.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -29,52 +28,23 @@ class _LoginPageState extends State<LoginScreen> {
     super.dispose();
   }
 
-  /*
-  void SingIn() async {
-    //loading
-    if (formaKey.currentState!.validate()) {
-      setState(() {
-        isLoading = true;
-      });
-    }
-    //try sign in
-    try {
-      await _auth.signInWithEmailAndPassword(
-          email: emailController.text, password: passwordController.text);
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const HomeScreen())
-      );
-      // pop the loading circle
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'Error en el inicio de sesión')),
-      );
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-*/
-
   Future<void> _signIn(String email, String password) async {
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
       if (userCredential.user != null) {
         final String userId = userCredential.user!.uid;
-        await _saveLoginId(userId);
-        Fluttertoast.showToast(msg: 'Exito iniciar session');
-        context.go('/home');
+        _saveLoginId(userId).then((value) {
+          Fluttertoast.showToast(msg: 'Exito iniciar session');
+          context.go('/home');
+        });
       }
-
     } catch (e) {
-      Fluttertoast.showToast(msg: 'Error al iniciar session verifique los campos');
+      Fluttertoast.showToast(
+          msg: 'Error al iniciar session verifique los campos');
     }
   }
 
@@ -83,127 +53,117 @@ class _LoginPageState extends State<LoginScreen> {
     await prefs.setString('login_id', id);
   }
 
+  void _handleLogin() {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      if (formaKey.currentState!.validate()) {
+        setState(() {
+          isLoading = true; // Activar el indicador de carga
+        });
+        _signIn(emailController.text.toString(),
+            passwordController.text.toString());
+      }
+    } catch (e) {
+      log('Error al autenticar: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          appBar: AppBar(),
-          body: Padding(
-            padding: const EdgeInsets.all(25),
-            child: SingleChildScrollView(
-              child: Form(
-                key: formaKey,
-                child: Column(
-                  children: [
-                    const Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "¡Hola! 👋",
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
+    final colorSchema = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              children: [
+                // Text
+                const Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "¡Hola! 👋",
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 5),
+
+                // Login form
+                Form(
+                  key: formaKey,
+                  child: Column(
+                    children: [
+                      // Email TextFormField
+                      TextFormField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        onSaved: (value) {
+                          emailController.text = value!;
+                        },
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.email_outlined),
+                          labelText: "Correo electrónico",
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      onSaved: (value) {
-                        emailController.text = value!;
-                      },
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                      decoration: const InputDecoration(
-                          fillColor: Color.fromRGBO(247, 238, 249, 2),
-                          filled: true,
-                          prefixIcon: Icon(Icons.email_outlined, size: 25),
-                          labelText: "CORREO ELECTRÓNICO",
-                          labelStyle: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black,
-                          )),
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: passwordController,
-                      onSaved: (value) {
-                        passwordController.text = value!;
-                      },
-                      obscureText: !showPassword,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 15,
-                      ),
-                      decoration: InputDecoration(
+                      const SizedBox(height: 20),
+
+                      // Password TextFormField
+                      TextFormField(
+                        controller: passwordController,
+                        onSaved: (value) {
+                          passwordController.text = value!;
+                        },
+                        obscureText: !showPassword,
+                        decoration: InputDecoration(
                           suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  showPassword = !showPassword;
-                                });
-                              },
-                              icon: Icon(
-                                showPassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.grey,
-                              )),
-                          fillColor: const Color.fromRGBO(247, 238, 249, 2),
-                          filled: true,
-                          prefixIcon: const Icon(Icons.password_outlined, size: 25),
-                          labelText: "CONTRASEÑA",
-                          labelStyle: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.black,
-                          )),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const ForgotPasswordScreen()),
-                        );
-                      },
-                      child: const Text('¿Olvidó su contraseña?'),
-                    ),
-                    const SizedBox(height: 280),
-                    ElevatedButton(
-                      onPressed: () {
-                        try {
-                          if (formaKey.currentState!.validate()) {
-                            setState(() {
-                              isLoading = true; // Activar el indicador de carga
-                            });
-                            _signIn(emailController.text.toString(),
-                                passwordController.text.toString());
-
-
-
-                          }
-                        } catch (e) {
-                          log('Error al autenticar: $e');
-                        } finally {
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.deepPurpleAccent,
-                          minimumSize: const Size(double.infinity, 40)),
-                      child: Text(isLoading ? 'CARGANDO...' : 'INICIAR SESSIÓN'),
-                    ),
-                  ],
+                            onPressed: () {
+                              setState(() {
+                                showPassword = !showPassword;
+                              });
+                            },
+                            icon: Icon(
+                              showPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          prefixIcon: const Icon(Icons.password_outlined),
+                          labelText: "Contraseña",
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ));
+
+            // Send Button
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    onPressed: _handleLogin,
+                    child: Text(isLoading ? 'CARGANDO...' : 'INICIAR SESSIÓN'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
