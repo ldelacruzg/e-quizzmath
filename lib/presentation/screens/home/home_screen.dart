@@ -1,5 +1,5 @@
 import 'package:e_quizzmath/presentation/providers/leaderboard_provider.dart';
-import 'package:e_quizzmath/presentation/screens/screens.dart';
+import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -13,53 +13,79 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int currentScreenIndex = 0;
-
   @override
   Widget build(BuildContext context) {
-    final leaderProvider = context.watch<LeaderboardProvider>();
-
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: _CustomAppBar(),
       ),
-      body: [
-        const DashboardScreen(), // Dashboard
-        const TopicsScreen(),
-        const LeaderboardScreen(),
-        const ConfigScreen()
-      ][currentScreenIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentScreenIndex,
-        onDestinationSelected: (index) {
-          if (index != currentScreenIndex && index != 2) {
-            setState(() {
-              currentScreenIndex = index;
-            });
-          }
+      body: _HomeView(),
+    );
+  }
+}
 
-          if (index == 2) {
-            context.go('/leaderboard');
-            leaderProvider.init();
-          }
-        },
-        destinations: const [
-          NavigationDestination(
-            label: 'Inicio',
-            icon: Icon(Icons.home_filled),
+class _HomeView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final userLoggedInProvider = context.watch<UserLoggedInProvider>();
+    final leaderboardProvider = context.watch<LeaderboardProvider>();
+    return Padding(
+      padding: const EdgeInsets.only(top: 40, right: 20, left: 20, bottom: 20),
+      child: Column(
+        children: [
+          // Hola
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Hola,',
+              style: TextStyle(
+                fontSize: 24,
+              ),
+            ),
           ),
-          NavigationDestination(
-            label: 'Temas',
-            icon: Icon(Icons.grid_view_rounded),
+
+          // Nombre
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              userLoggedInProvider.userLogged.fullName,
+              style: const TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-          NavigationDestination(
-            label: 'Clasificación',
-            icon: Icon(Icons.leaderboard_rounded),
-          ),
-          NavigationDestination(
-            label: 'Perfil',
-            icon: Icon(Icons.person_2_rounded),
+
+          // Actions
+          const SizedBox(height: 20),
+          Expanded(
+            child: GridView.count(
+              childAspectRatio: MediaQuery.of(context).size.width /
+                  (MediaQuery.of(context).size.height / 2.7),
+              crossAxisCount: 2,
+              children: [
+                GestureDetector(
+                  onTap: () => context.push('/topics'),
+                  child: const _CustomCardItem(
+                    color: Colors.orangeAccent,
+                    title: 'Temas',
+                    icon: Icons.grid_view_rounded,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => {
+                    leaderboardProvider.init(),
+                    context.push('/leaderboard')
+                  },
+                  child: const _CustomCardItem(
+                    color: Colors.blueAccent,
+                    title: 'Clasificación',
+                    icon: Icons.leaderboard_rounded,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -67,25 +93,79 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _CustomAppBar extends StatelessWidget {
+class _CustomCardItem extends StatelessWidget {
+  final Color color;
+  final String title;
+  final IconData icon;
+
+  const _CustomCardItem({
+    required this.color,
+    required this.title,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: color,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                maxLines: 1,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/* class _CustomAppBar extends StatelessWidget {
   const _CustomAppBar();
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final userLoggedInProvider = context.watch<UserLoggedInProvider>();
+
     return AppBar(
-      // ignore: prefer_const_constructors
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              CircleAvatar(radius: 20, child: RandomAvatar('Luis De La Cruz')),
+              CircleAvatar(
+                  radius: 20,
+                  child:
+                      RandomAvatar(userLoggedInProvider.userLogged.fullName)),
               const SizedBox(width: 10),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Hola,',
                     style: TextStyle(
                       fontSize: 16,
@@ -93,8 +173,8 @@ class _CustomAppBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Luis De La Cruz',
-                    style: TextStyle(
+                    userLoggedInProvider.userLogged.fullName,
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                     ),
@@ -103,22 +183,34 @@ class _CustomAppBar extends StatelessWidget {
               ),
             ],
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            decoration: BoxDecoration(
-              color: colorScheme.primary,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: const Text(
-              '120 EXP',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white),
-            ),
-          )
         ],
       ),
+    );
+  }
+}
+ */
+
+class _CustomAppBar extends StatelessWidget {
+  const _CustomAppBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final userLoggedInProvider = context.watch<UserLoggedInProvider>();
+
+    return AppBar(
+      title: const Text('e-QuizzMath'),
+      actions: [
+        GestureDetector(
+          onTap: () => context.push('/profile/config'),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: CircleAvatar(
+              radius: 20,
+              child: RandomAvatar(userLoggedInProvider.userLogged.fullName),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

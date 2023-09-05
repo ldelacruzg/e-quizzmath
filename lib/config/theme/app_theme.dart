@@ -19,6 +19,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorSchemeSeed: _colorTheme[selectedColor],
+      fontFamily: 'Montserrat',
     );
   }
 }

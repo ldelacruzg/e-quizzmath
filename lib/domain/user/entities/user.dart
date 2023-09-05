@@ -10,4 +10,6 @@ class User {
     required this.email,
     this.phone = '',
   });
+
+  get fullName => '$firstName $lastName';
 }

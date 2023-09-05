@@ -7,10 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({super.key});
   @override
-  State<StatefulWidget> createState()=>_PersonalInformationScreenState();
+  State<StatefulWidget> createState() => _PersonalInformationScreenState();
 }
 
-class _PersonalInformationScreenState extends State<PersonalInformationScreen>{
+class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
   // Controladores de edición para los campos
   TextEditingController nombresController = TextEditingController();
   TextEditingController apellidosController = TextEditingController();
@@ -24,7 +24,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen>{
     setState(() {
       if (isEditing) {
         saveChanges();
-
       }
       isEditing = !isEditing;
     });
@@ -57,11 +56,11 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen>{
       // El documento no existe en Firestore, maneja este caso según tus necesidades
     }
   }
-  Future<void>  saveChanges() async {
+
+  Future<void> saveChanges() async {
     final prefs = await SharedPreferences.getInstance();
     String userId = prefs.getString('login_id') ?? '';
-    try{
-
+    try {
       await FirebaseFirestore.instance.collection('Users').doc(userId).update({
         'FullName': nombresController.text.toString(),
         'LastName': apellidosController.text.toString(),
@@ -69,11 +68,12 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen>{
         'phone': telefonoController.text.toString(),
       });
 
-      Fluttertoast.showToast(msg: apellidosController.text.toString() +nombresController.text.toString());
-    }catch(e){
+      Fluttertoast.showToast(
+          msg: apellidosController.text.toString() +
+              nombresController.text.toString());
+    } catch (e) {
       Fluttertoast.showToast(msg: e.toString());
     }
-
   }
 
   @override
@@ -81,101 +81,80 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen>{
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: const Text('Información personal'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back), // Icono de flecha hacia atrás
-          onPressed: () {
-            // Acción a realizar cuando se presiona la flecha hacia atrás
-            // Puedes añadir tu lógica aquí, como la navegación hacia atrás.
-            Navigator.pop(context); // Ejemplo de navegación hacia atrás
-          },
-        ),
       ),
       body: Container(
-        padding: const EdgeInsets.all(30),
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Column(
-            children: [
-              Center(
-                child: Stack(
-                  children: [
-                    Container(
-                      // Establece la decoración del contenedor
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(150),
-                        border: Border.all(
-                          color: Colors.black12,
-                          width: 5,
-                        ),
-                      ),
-                      // Define el ancho del contenedor como el 35% del ancho de la pantalla
-                      width: size.width * 0.35,
-                      // Define la altura del contenedor como el 35% del ancho de la pantalla
-                      height: size.width * 0.35,
-                      // El contenido del contenedor es un widget personalizado llamado RandomAvatar
-                      child: RandomAvatar("${nombresController.text} ${apellidosController.text}"), // Pasa el nombre como parámetro
-                    ),
-
-                  ],
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(150),
+                  border: Border.all(
+                    color: Colors.black12,
+                    width: 5,
+                  ),
+                ),
+                width: size.width * 0.35,
+                height: size.width * 0.35,
+                child: RandomAvatar(
+                    "${nombresController.text} ${apellidosController.text}"), // Pasa el nombre como parámetro
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              enabled: isEditing,
+              decoration: InputDecoration(
+                fillColor: const Color.fromRGBO(247, 238, 249, 2),
+                filled: true,
+                labelText: "Nombres",
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                prefixIcon: const Icon(Icons.person, size: 20),
+                hintText: nombresController.text.toString(),
+                hintStyle: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 10),
-              TextFormField(
-                enabled: isEditing,
-                decoration:  InputDecoration(
-                    fillColor: const Color.fromRGBO(247, 238, 249, 2),
-                    filled: true,
-                    labelText: "NOMBRES",
-                    floatingLabelBehavior: FloatingLabelBehavior.always,
-                    prefixIcon: const Icon(Icons.person, size: 20),
-                    hintText: nombresController.text.toString(),
-                    hintStyle: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    )),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              enabled: isEditing,
+              decoration: InputDecoration(
+                fillColor: const Color.fromRGBO(247, 238, 249, 2),
+                filled: true,
+                labelText: "APELLIDOS",
+                prefixIcon: const Icon(Icons.person),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                hintText: apellidosController.text.toString(),
               ),
-              const SizedBox(height: 10),
-              TextFormField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  fillColor: const Color.fromRGBO(247, 238, 249, 2),
-                  filled: true,
-                  labelText: "APELLIDOS",
-                  prefixIcon: const Icon(Icons.person),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: apellidosController.text.toString(),
-                ),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              enabled: isEditing,
+              decoration: InputDecoration(
+                fillColor: const Color.fromRGBO(247, 238, 249, 2),
+                filled: true,
+                labelText: "EMAIL",
+                prefixIcon: const Icon(Icons.email, size: 20),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                hintText: correoController.text.toString(),
               ),
-              const SizedBox(height: 10),
-              TextFormField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  fillColor: const Color.fromRGBO(247, 238, 249, 2),
-                  filled: true,
-                  labelText: "EMAIL",
-                  prefixIcon: const Icon(Icons.email, size: 20),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: correoController.text.toString(),
-                ),
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              enabled: isEditing,
+              decoration: InputDecoration(
+                fillColor: const Color.fromRGBO(247, 238, 249, 2),
+                filled: true,
+                labelText: "CELULAR",
+                prefixIcon: const Icon(Icons.phone, size: 20),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                hintText: telefonoController.text.toString(),
               ),
-              const SizedBox(height: 10),
-              TextFormField(
-                enabled: isEditing,
-                decoration: InputDecoration(
-                  fillColor: const Color.fromRGBO(247, 238, 249, 2),
-                  filled: true,
-                  labelText: "CELULAR",
-                  prefixIcon:const Icon(Icons.phone, size: 20),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  hintText: telefonoController.text.toString(),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

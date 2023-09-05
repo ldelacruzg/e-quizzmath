@@ -2,6 +2,7 @@ import 'package:e_quizzmath/config/router/app_router.dart';
 import 'package:e_quizzmath/config/theme/app_theme.dart';
 import 'package:e_quizzmath/presentation/providers/leaderboard_provider.dart';
 import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
+import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,9 @@ void main() {
         ),
         ChangeNotifierProvider(
           create: (context) => LeaderboardProvider()..init(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => UserLoggedInProvider(),
         )
       ],
       child: const MainApp(),

@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,6 +22,15 @@ class _LoginPageState extends State<LoginScreen> {
   final formaKey = GlobalKey<FormState>();
   bool isLoading = false;
   bool showPassword = false;
+  late UserLoggedInProvider userLoggedInProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    userLoggedInProvider = context.read<UserLoggedInProvider>();
+    emailController.text = 'luisgende@gmail.com';
+    passwordController.text = '123456789';
+  }
 
   @override
   void dispose() {
@@ -37,9 +48,11 @@ class _LoginPageState extends State<LoginScreen> {
 
       if (userCredential.user != null) {
         final String userId = userCredential.user!.uid;
-        _saveLoginId(userId).then((value) {
-          Fluttertoast.showToast(msg: 'Exito iniciar session');
-          context.go('/home');
+        userLoggedInProvider.getUserLoggedIn(userId).then((value) {
+          _saveLoginId(userId).then((value) {
+            Fluttertoast.showToast(msg: 'Exito iniciar session');
+            context.go('/home');
+          });
         });
       }
     } catch (e) {
