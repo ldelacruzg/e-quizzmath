@@ -32,14 +32,31 @@ class ConfigScreen extends StatelessWidget {
             colorIcon: Colors.red,
             icon: Icons.logout_rounded,
             title: 'Cerrar sesión',
-            onTap: () {
-              FirebaseAuth.instance.signOut().then((value) {
-                SharedPreferences.getInstance().then((prefs) {
-                  prefs.remove('userId');
-                  context.go('/');
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('¿Estás seguro de cerrar sesión?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => context.pop(false),
+                    child: const Text('No'),
+                  ),
+                  TextButton(
+                    onPressed: () => context.pop(true),
+                    child: const Text('Si'),
+                  ),
+                ],
+              ),
+            ).then((value) {
+              if (value == true) {
+                FirebaseAuth.instance.signOut().then((value) {
+                  SharedPreferences.getInstance().then((prefs) {
+                    prefs.remove('userId');
+                    context.go('/');
+                  });
                 });
-              });
-            },
+              }
+            }),
           ),
         ],
       ),
