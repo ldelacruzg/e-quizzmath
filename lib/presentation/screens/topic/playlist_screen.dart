@@ -100,13 +100,17 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
       initialVideoId: videoUrl!,
       flags: const YoutubePlayerFlags(
         autoPlay: true,
-        mute: true,
+        mute: false,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final playListProvider = context.watch<PlayListProvider>();
+    _controller.load(
+        YoutubePlayer.convertUrlToId(playListProvider.currentVideo.videoUrl)!);
+
     return YoutubePlayer(
       controller: _controller,
       showVideoProgressIndicator: true,
