@@ -28,8 +28,8 @@ class _LoginPageState extends State<LoginScreen> {
   void initState() {
     super.initState();
     userLoggedInProvider = context.read<UserLoggedInProvider>();
-    emailController.text = 'luisgende@gmail.com';
-    passwordController.text = '123456789';
+    /* emailController.text = 'luisgende@gmail.com';
+    passwordController.text = '123456789'; */
   }
 
   @override
@@ -167,7 +167,7 @@ class _LoginPageState extends State<LoginScreen> {
                 Expanded(
                   child: FilledButton(
                     onPressed: _handleLogin,
-                    child: Text(isLoading ? 'CARGANDO...' : 'INICIAR SESSIÓN'),
+                    child: Text(isLoading ? 'CARGANDO...' : 'INICIAR SESIÓN'),
                   ),
                 ),
               ],

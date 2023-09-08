@@ -100,6 +100,7 @@ class _MyVideoPlayerState extends State<MyVideoPlayer> {
       initialVideoId: videoUrl!,
       flags: const YoutubePlayerFlags(
         autoPlay: true,
+        hideControls: true,
         mute: false,
       ),
     );

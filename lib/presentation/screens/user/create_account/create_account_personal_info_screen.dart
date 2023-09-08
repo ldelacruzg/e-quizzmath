@@ -197,7 +197,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                               });
                         }
                       },
-                      child: const Text('REGISTRASE'),
+                      child: const Text('REGISTRARSE'),
                     ),
                   ),
                 ],
