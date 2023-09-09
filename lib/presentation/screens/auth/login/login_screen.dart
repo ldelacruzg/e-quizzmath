@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +26,8 @@ class _LoginPageState extends State<LoginScreen> {
   void initState() {
     super.initState();
     userLoggedInProvider = context.read<UserLoggedInProvider>();
-    /* emailController.text = 'luisgende@gmail.com';
-    passwordController.text = '123456789'; */
+    emailController.text = 'teacher1@gmail.com';
+    passwordController.text = '123456789';
   }
 
   @override
@@ -50,7 +48,6 @@ class _LoginPageState extends State<LoginScreen> {
         final String userId = userCredential.user!.uid;
         userLoggedInProvider.getUserLoggedIn(userId).then((value) {
           _saveLoginId(userId).then((value) {
-            Fluttertoast.showToast(msg: 'Exito iniciar session');
             context.go('/home');
           });
         });
@@ -64,22 +61,19 @@ class _LoginPageState extends State<LoginScreen> {
   Future<void> _saveLoginId(String id) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('login_id', id);
+    await prefs.setString('type', userLoggedInProvider.userLogged.type);
   }
 
-  void _handleLogin() {
+  void _handleLogin() async {
     setState(() {
       isLoading = true;
     });
+
     try {
       if (formaKey.currentState!.validate()) {
-        setState(() {
-          isLoading = true; // Activar el indicador de carga
-        });
-        _signIn(emailController.text.toString(),
+        await _signIn(emailController.text.toString(),
             passwordController.text.toString());
       }
-    } catch (e) {
-      log('Error al autenticar: $e');
     } finally {
       setState(() {
         isLoading = false;
@@ -166,7 +160,7 @@ class _LoginPageState extends State<LoginScreen> {
               children: [
                 Expanded(
                   child: FilledButton(
-                    onPressed: _handleLogin,
+                    onPressed: isLoading ? null : _handleLogin,
                     child: Text(isLoading ? 'CARGANDO...' : 'INICIAR SESIÓN'),
                   ),
                 ),

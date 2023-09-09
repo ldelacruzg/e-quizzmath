@@ -9,6 +9,8 @@ enum Collections {
   assignedQuestions,
   units,
   topics,
+  classes,
+  classStudents
 }
 
 Map<Collections, CollectionReference> collections = {
@@ -23,4 +25,7 @@ Map<Collections, CollectionReference> collections = {
       FirebaseFirestore.instance.collection('assigned_questions'),
   Collections.units: FirebaseFirestore.instance.collection('units'),
   Collections.topics: FirebaseFirestore.instance.collection('topics'),
+  Collections.classes: FirebaseFirestore.instance.collection('classes'),
+  Collections.classStudents:
+      FirebaseFirestore.instance.collection('class_students'),
 };

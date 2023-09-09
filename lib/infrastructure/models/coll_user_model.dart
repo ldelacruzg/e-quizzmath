@@ -9,11 +9,13 @@ class UserModel extends User {
     required String lastName,
     required String email,
     String phone = '',
+    String type = '',
   }) : super(
           firstName: firstName,
           lastName: lastName,
           email: email,
           phone: phone,
+          type: type,
         );
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class UserModel extends User {
       lastName: json['LastName'],
       email: json['email'],
       phone: json['phone'],
+      type: json['type'],
     );
   }
 
@@ -33,6 +36,7 @@ class UserModel extends User {
       'LastName': lastName,
       'email': email,
       'phone': phone,
+      'type': type,
     };
   }
 
@@ -42,6 +46,7 @@ class UserModel extends User {
       lastName: lastName,
       email: email,
       phone: phone,
+      type: type,
     );
   }
 }

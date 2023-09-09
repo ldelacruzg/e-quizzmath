@@ -147,9 +147,16 @@ class _LeaderboardNormalItem extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    item.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  SizedBox(
+                    width: size.width * 0.45,
+                    child: Text(
+                      item.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      maxLines: 1,
+                    ),
                   ),
                   const SizedBox(height: 5),
                   Text('${item.score} EXP',

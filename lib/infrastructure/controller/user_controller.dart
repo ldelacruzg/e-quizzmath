@@ -11,11 +11,14 @@ class UserController {
   final lastName = TextEditingController();
   final password = TextEditingController();
   final pone = TextEditingController();
+  final selectedAccountType = ValueNotifier<String>('');
+  final accountTypes = ['student', 'teacher'];
 
   Future<void> createUser(UserModel userm) async {
     try {
-      if (userm.email.toString().isNotEmpty && isValidEmail(userm.email.toString())) {
-          UserCredential authResult = await _auth.createUserWithEmailAndPassword(
+      if (userm.email.toString().isNotEmpty &&
+          isValidEmail(userm.email.toString())) {
+        UserCredential authResult = await _auth.createUserWithEmailAndPassword(
           email: userm.email.toString(),
           password: userm.password.toString(),
         );
@@ -27,6 +30,7 @@ class UserController {
       print('Error al crear usuario');
     }
   }
+
   void dispose() {
     email.dispose();
     firstName.dispose();

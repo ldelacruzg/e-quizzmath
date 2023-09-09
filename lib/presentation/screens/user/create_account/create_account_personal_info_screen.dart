@@ -4,14 +4,88 @@ import 'package:e_quizzmath/presentation/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CreateAccountPersonalInfoScreen extends StatelessWidget {
+class CreateAccountPersonalInfoScreen extends StatefulWidget {
   const CreateAccountPersonalInfoScreen({super.key});
 
   @override
+  State<CreateAccountPersonalInfoScreen> createState() =>
+      _CreateAccountPersonalInfoScreenState();
+}
+
+class _CreateAccountPersonalInfoScreenState
+    extends State<CreateAccountPersonalInfoScreen> {
+  bool _isLoading = false;
+  final controller = Get.put(UserController());
+  final UserController userController = UserController();
+  final formaKey = GlobalKey<FormState>();
+
+  void _createAccount() {
+    setState(() {
+      _isLoading = true;
+    });
+
+    if (formaKey.currentState!.validate()) {
+      final users = UserModel(
+        lastName: controller.lastName.text.trim(),
+        firstName: controller.firstName.text.trim(),
+        phone: controller.pone.text.trim(),
+        email: controller.email.text.trim(),
+        password: controller.password.text.trim(),
+        type: controller.selectedAccountType.value,
+      );
+
+      userController.createUser(users).then((value) {
+        formaKey.currentState!.reset();
+
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Cuenta creada ✅'),
+            content: const Text('Se ha creado correctamente su usuario'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
+                },
+                child: const Text('Aceptar'),
+              ),
+            ],
+          ),
+        );
+      }).whenComplete(() {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Alerta 🚧'),
+            content: const Text('Se han encontrado campos inválidos'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Aceptar'),
+              )
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(UserController());
-    final UserController userController = UserController();
-    final formaKey = GlobalKey<FormState>();
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -31,6 +105,7 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 35),
+
                   const Text(
                     "Complete su perfil. No se preocupe, sus datos permanecerán privados y sólo usted podrá verlos.",
                     style: TextStyle(fontSize: 16),
@@ -43,6 +118,28 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Tipo de cuenta
+                        DropdownButtonFormField(
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.account_circle_rounded),
+                            labelText: "Tipo de cuenta",
+                          ),
+                          onChanged: (value) {
+                            controller.selectedAccountType.value = value!;
+                          },
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'student',
+                              child: Text('Estudiante'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'teacher',
+                              child: Text('Profesor'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 32),
+
                         // Nombre
                         TextFormField(
                           controller: controller.firstName,
@@ -142,62 +239,10 @@ class CreateAccountPersonalInfoScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: FilledButton(
-                      onPressed: () {
-                        if (formaKey.currentState!.validate()) {
-                          final users = UserModel(
-                              lastName: controller.lastName.text.trim(),
-                              firstName: controller.firstName.text.trim(),
-                              phone: controller.pone.text.trim(),
-                              email: controller.email.text.trim(),
-                              password: controller.password.text.trim());
-                          userController.createUser(users);
-
-                          formaKey.currentState!.reset();
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Cuenta creada ✅'),
-                                  content: const Text(
-                                      'Se ha creado correctamente su usuario'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LoginScreen(),
-                                          ),
-                                        );
-                                      },
-                                      child: const Text('Aceptar'),
-                                    ),
-                                  ],
-                                );
-                              });
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Alerta 🚧'),
-                                  content: const Text(
-                                      'Se han encontrado campos inválidos'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text('Aceptar'),
-                                    )
-                                  ],
-                                );
-                              });
-                        }
-                      },
-                      child: const Text('REGISTRARSE'),
+                      onPressed: _isLoading ? null : _createAccount,
+                      child: _isLoading
+                          ? const Text('CARGANDO...')
+                          : const Text('REGISTRARSE'),
                     ),
                   ),
                 ],

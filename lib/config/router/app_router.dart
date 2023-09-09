@@ -36,6 +36,10 @@ final appRouter = GoRouter(
       builder: (context, state) => const HomeScreen(),
     ),
     GoRoute(
+      path: '/home/teacher',
+      builder: (context, state) => const HomeTeacherScreen(),
+    ),
+    GoRoute(
       path: '/topics',
       builder: (context, state) => const TopicsScreen(),
     ),
@@ -66,6 +70,18 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/profile/personal-information',
       builder: (context, state) => const PersonalInformationScreen(),
+    ),
+    GoRoute(
+      path: '/classes',
+      builder: (context, state) => const ClassesScreen(),
+    ),
+    GoRoute(
+      path: '/create-class',
+      builder: (context, state) => const CreateClassScreen(),
+    ),
+    GoRoute(
+      path: '/class/students',
+      builder: (context, state) => const StudentsScreen(),
     ),
   ],
 );

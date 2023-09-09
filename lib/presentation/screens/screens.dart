@@ -1,3 +1,7 @@
+export 'package:e_quizzmath/presentation/screens/class/students_screen.dart';
+export 'package:e_quizzmath/presentation/screens/class/create_class_screen.dart';
+export 'package:e_quizzmath/presentation/screens/class/classes_screen.dart';
+export 'package:e_quizzmath/presentation/screens/home/home_teacher_screen.dart';
 export 'package:e_quizzmath/presentation/screens/quiz/quiz_result_screen.dart';
 export 'package:e_quizzmath/presentation/screens/home/dashboard_screen.dart';
 export 'package:e_quizzmath/presentation/screens/user/create_account/create_account_credencials_screen.dart';

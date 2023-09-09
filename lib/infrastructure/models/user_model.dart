@@ -1,5 +1,3 @@
-
-
 class UserModel {
   final String? id;
   final String? firstName;
@@ -7,13 +5,17 @@ class UserModel {
   final String? email;
   final String? phone;
   final String? password;
+  final String? type;
 
-  const UserModel({this.id,
+  const UserModel({
+    this.id,
     this.firstName,
     this.lastName,
     this.email,
     this.phone,
-    this.password});
+    this.password,
+    this.type,
+  });
 
   toJS() {
     return {
@@ -21,7 +23,8 @@ class UserModel {
       "LastName": lastName,
       "email": email,
       "phone": phone,
-      "password": password
+      "password": password,
+      "type": type,
     };
   }
 }
