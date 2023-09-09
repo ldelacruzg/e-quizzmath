@@ -1,6 +1,7 @@
 import 'package:e_quizzmath/config/router/app_router.dart';
 import 'package:e_quizzmath/config/theme/app_theme.dart';
 import 'package:e_quizzmath/presentation/providers/class_provider.dart';
+import 'package:e_quizzmath/presentation/providers/create_class_provider.dart';
 import 'package:e_quizzmath/presentation/providers/leaderboard_provider.dart';
 import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
 import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
@@ -27,6 +28,9 @@ void main() {
           ),
           ChangeNotifierProvider(
             create: (context) => ClassProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => CreateClassProvider(),
           )
         ],
         child: const MainApp(),

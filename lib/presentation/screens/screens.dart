@@ -1,3 +1,4 @@
+export 'package:e_quizzmath/presentation/screens/class/create_topic_screen.dart';
 export 'package:e_quizzmath/presentation/screens/class/students_screen.dart';
 export 'package:e_quizzmath/presentation/screens/class/create_class_screen.dart';
 export 'package:e_quizzmath/presentation/screens/class/classes_screen.dart';

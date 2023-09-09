@@ -83,5 +83,9 @@ final appRouter = GoRouter(
       path: '/class/students',
       builder: (context, state) => const StudentsScreen(),
     ),
+    GoRoute(
+      path: '/class/create-topic',
+      builder: (context, state) => CreateTopicScreen(),
+    ),
   ],
 );

@@ -1,4 +1,5 @@
 import 'package:e_quizzmath/presentation/providers/class_provider.dart';
+import 'package:e_quizzmath/presentation/providers/create_class_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_circle_progress_indicator.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_not_content.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ class ClassesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final classProvider = context.watch<ClassProvider>();
+    final createClassProvider = context.watch<CreateClassProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -23,6 +25,7 @@ class ClassesScreen extends StatelessWidget {
               : const _CustomListClasses(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          createClassProvider.reset();
           context.push('/create-class');
         },
         child: const Icon(Icons.add),

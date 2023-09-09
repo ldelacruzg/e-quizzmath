@@ -28,14 +28,14 @@ class HomeTeacherScreen extends StatelessWidget {
               icon: Icons.class_rounded,
             ),
           ),
-          /* GestureDetector(
+          GestureDetector(
             onTap: () {},
             child: const CustomCardItem(
               color: Colors.orangeAccent,
-              title: 'Crear tema',
+              title: 'Mis temas',
               icon: Icons.topic_rounded,
             ),
-          ), */
+          ),
         ],
       ),
     );

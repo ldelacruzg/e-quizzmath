@@ -1,12 +1,14 @@
 class Class {
-  final String id;
-  final String code;
-  final String title;
+  String id;
+  String code;
+  String title;
+  String description;
 
   Class({
-    required this.id,
-    required this.code,
+    this.id = '',
+    this.code = '',
     required this.title,
+    required this.description,
   });
 
   factory Class.fromJson(Map<String, dynamic> json) {
@@ -14,6 +16,7 @@ class Class {
       id: json['id'],
       code: json['code'],
       title: json['title'],
+      description: json['description'],
     );
   }
 }
