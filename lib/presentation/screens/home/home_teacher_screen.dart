@@ -1,4 +1,5 @@
 import 'package:e_quizzmath/presentation/providers/class_provider.dart';
+import 'package:e_quizzmath/presentation/providers/topic_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/home/custom_card_item.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ class HomeTeacherScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final classProvider = context.watch<ClassProvider>();
+    final topicProvider = context.watch<TopicProvider>();
 
     return Expanded(
       child: GridView.count(
@@ -29,7 +31,10 @@ class HomeTeacherScreen extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              topicProvider.loadTopics();
+              context.push('/teacher/topics');
+            },
             child: const CustomCardItem(
               color: Colors.orangeAccent,
               title: 'Mis temas',

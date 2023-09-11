@@ -85,7 +85,19 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/class/create-topic',
-      builder: (context, state) => CreateTopicScreen(),
+      builder: (context, state) => const CreateTopicScreen(),
     ),
+    GoRoute(
+      path: '/teacher/topics',
+      builder: (context, state) => const MyTopicsScreen(),
+    ),
+    GoRoute(
+      path: '/class/topic/create-unit',
+      builder: (context, state) => const CreateUnitScreen(),
+    ),
+    GoRoute(
+      path: '/class/topics',
+      builder: (context, state) => const MyTopicsScreen(),
+    )
   ],
 );

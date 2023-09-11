@@ -1,5 +1,6 @@
 import 'package:e_quizzmath/presentation/providers/class_provider.dart';
 import 'package:e_quizzmath/presentation/providers/create_class_provider.dart';
+import 'package:e_quizzmath/presentation/providers/topic_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_circle_progress_indicator.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_not_content.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class ClassesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final classProvider = context.watch<ClassProvider>();
     final createClassProvider = context.watch<CreateClassProvider>();
+    final topicProvider = context.watch<TopicProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -21,11 +23,14 @@ class ClassesScreen extends StatelessWidget {
       body: classProvider.isLoading
           ? const CustomCircleProgressIndicator()
           : (classProvider.classes.isEmpty)
-              ? const CustomNotContent()
+              ? const CustomNotContent(
+                  message: 'No hay clases creadas',
+                )
               : const _CustomListClasses(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           createClassProvider.reset();
+          topicProvider.loadTopics();
           context.push('/create-class');
         },
         child: const Icon(Icons.add),
@@ -40,6 +45,7 @@ class _CustomListClasses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final classProvider = context.watch<ClassProvider>();
+    final topicProvider = context.watch<TopicProvider>();
 
     return ListView.builder(
       itemCount: classProvider.classes.length,
@@ -63,8 +69,9 @@ class _CustomListClasses extends StatelessWidget {
               PopupMenuItem(
                 child: const Text('Temas'),
                 onTap: () {
-                  classProvider.loadStudentsByClass(index);
-                  context.push('/class/students');
+                  topicProvider
+                      .loadTopicsByClass(classProvider.classes[index].id);
+                  context.push('/class/topics');
                 },
               ),
               PopupMenuItem(

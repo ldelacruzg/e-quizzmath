@@ -1,22 +1,19 @@
 import 'package:e_quizzmath/domain/class/class.dart';
+import 'package:e_quizzmath/domain/topic/entities/topic.dart';
 import 'package:flutter/material.dart';
 
 class CreateClassProvider with ChangeNotifier {
   final List<Map<String, dynamic>> _steps = [
     {
-      'title': 'Crear clase 📚',
+      'title': 'Crear clase',
       'description': 'Escribe el título de la clase',
     },
     {
-      'title': 'Asignar temas 📝',
+      'title': 'Asignar temas',
       'description': 'Escribe la descripción de la clase',
     },
     {
-      'title': 'Asignar unidades 📖',
-      'description': 'Agrega contenido a la clase',
-    },
-    {
-      'title': 'Resumen 📋',
+      'title': 'Resumen',
       'description': 'Comparte el código de la clase',
     }
   ];
@@ -24,10 +21,12 @@ class CreateClassProvider with ChangeNotifier {
   final List<Topic> _assignedTopics = [];
   final Topic formTopic = Topic(title: '', description: '');
   final Class formClass = Class(title: '', description: '');
+  final List<String> _assignedTopicsIds = [];
 
   int _currentStepIndex = 0;
 
   List<Topic> get assignedTopics => _assignedTopics;
+  List<String> get assignedTopicsIds => _assignedTopicsIds;
 
   int get numAssignedTopics => _assignedTopics.length;
   int get currentStepIndex => _currentStepIndex;
@@ -63,27 +62,16 @@ class CreateClassProvider with ChangeNotifier {
     _assignedTopics.removeAt(index);
     notifyListeners();
   }
-}
 
-class Topic {
-  String id = '';
-  String title;
-  String description;
-  List<Unit> units = [];
+  // assig topic id
+  void addTopicId(String id) {
+    _assignedTopicsIds.add(id);
+    notifyListeners();
+  }
 
-  Topic({
-    required this.title,
-    required this.description,
-  });
-}
-
-class Unit {
-  String id = '';
-  String title;
-  String description;
-
-  Unit({
-    required this.title,
-    required this.description,
-  });
+  // remove topic id
+  void deleteTopicId(String id) {
+    _assignedTopicsIds.remove(id);
+    notifyListeners();
+  }
 }
