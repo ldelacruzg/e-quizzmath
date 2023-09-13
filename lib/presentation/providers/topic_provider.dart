@@ -1,19 +1,67 @@
 import 'package:e_quizzmath/config/firebase/collections_firebase.dart';
 import 'package:e_quizzmath/domain/topic/entities/topic.dart';
-import 'package:e_quizzmath/domain/topic/entities/unit.dart';
 import 'package:e_quizzmath/shared/functions/functions.dart';
 import 'package:flutter/material.dart';
 
 class TopicProvider with ChangeNotifier {
+  List<Map<String, dynamic>> topicSteps = [
+    {
+      'title': 'Crear tema',
+    },
+    {
+      'title': 'Crear unidades',
+    },
+    {
+      'title': 'Resumen',
+    }
+  ];
+
   bool isLoading = false;
-  int numSteps = 2;
-  int currentSteps = 1;
+  int currentSteps = 0;
   final List<Topic> _topics = [];
-  final List<Unit> _units = [];
 
   List<Topic> get topics => _topics;
-  List<Unit> get units => _units;
+  int get numSteps => topicSteps.length;
 
+  // Propiedades para el formulario "Crear unidad"
+  final List<FormCreateUnit> _units = [];
+  final FormCreateUnit formCreateUnit = FormCreateUnit();
+  final GlobalKey<FormState> formKeyInfoGeneral = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKeyPlaylist = GlobalKey<FormState>();
+
+  // Funciones para el formulario "Crear unidad"
+  List<FormCreateUnit> get units => _units;
+  int get numVideos => formCreateUnit.playlist.length;
+
+  void addVideo() {
+    if (formKeyPlaylist.currentState!.validate()) {
+      formKeyPlaylist.currentState!.save();
+      formCreateUnit.playlist.add(formCreateUnit.urlVideo);
+      formKeyPlaylist.currentState!.reset();
+    }
+
+    notifyListeners();
+  }
+
+  void deleteVideo(int index) {
+    formCreateUnit.playlist.removeAt(index);
+    notifyListeners();
+  }
+
+  void saveFormCreateUnit() {
+    if (formKeyInfoGeneral.currentState!.validate()) {
+      formKeyInfoGeneral.currentState!.save();
+
+      _units.add(formCreateUnit);
+
+      formKeyInfoGeneral.currentState!.reset();
+      formCreateUnit.playlist.clear();
+    }
+
+    notifyListeners();
+  }
+
+  // Funciones
   void loadTopics() async {
     isLoading = true;
     _topics.clear();
@@ -61,8 +109,8 @@ class TopicProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Topic> _getTopicById(String id) async {
-    final topicRef = collections[Collections.topics]!.doc(id);
+  Future<Topic> _getTopicById(String topicId) async {
+    final topicRef = collections[Collections.topics]!.doc(topicId);
     final topic = await topicRef.get();
 
     final data = topic.data() as Map<String, dynamic>;
@@ -79,15 +127,22 @@ class TopicProvider with ChangeNotifier {
   }
 
   void previousStep() {
-    if (currentSteps > 1) {
+    if (currentSteps > 0) {
       currentSteps--;
     }
     notifyListeners();
   }
 
   void reset() {
-    currentSteps = 1;
+    currentSteps = 0;
     _units.clear();
     notifyListeners();
   }
+}
+
+class FormCreateUnit {
+  String title = '';
+  String description = '';
+  String urlVideo = '';
+  List<String> playlist = []; // only url video
 }

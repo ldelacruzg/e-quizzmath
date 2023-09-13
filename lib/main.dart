@@ -19,7 +19,7 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(
-            create: (context) => QuizProvider(),
+            create: (context) => QuizProvider()..loadQuestions(),
           ),
           ChangeNotifierProvider(
             create: (context) => LeaderboardProvider(),
