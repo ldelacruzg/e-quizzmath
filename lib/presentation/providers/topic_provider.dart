@@ -23,11 +23,16 @@ class TopicProvider with ChangeNotifier {
   List<Topic> get topics => _topics;
   int get numSteps => topicSteps.length;
 
+  // Propiedades para el formulario "Crear tema"
+  final Topic formCreateTopic = Topic(title: '', description: '');
+  final GlobalKey<FormState> formKeyCreateTopic = GlobalKey<FormState>();
+
   // Propiedades para el formulario "Crear unidad"
   final List<FormCreateUnit> _units = [];
   final FormCreateUnit formCreateUnit = FormCreateUnit();
   final GlobalKey<FormState> formKeyInfoGeneral = GlobalKey<FormState>();
   final GlobalKey<FormState> formKeyPlaylist = GlobalKey<FormState>();
+  String urlVideo = '';
 
   // Funciones para el formulario "Crear unidad"
   List<FormCreateUnit> get units => _units;
@@ -36,7 +41,7 @@ class TopicProvider with ChangeNotifier {
   void addVideo() {
     if (formKeyPlaylist.currentState!.validate()) {
       formKeyPlaylist.currentState!.save();
-      formCreateUnit.playlist.add(formCreateUnit.urlVideo);
+      formCreateUnit.playlist.add(urlVideo);
       formKeyPlaylist.currentState!.reset();
     }
 
@@ -52,7 +57,7 @@ class TopicProvider with ChangeNotifier {
     if (formKeyInfoGeneral.currentState!.validate()) {
       formKeyInfoGeneral.currentState!.save();
 
-      _units.add(formCreateUnit);
+      _units.add(FormCreateUnit.copy(formCreateUnit));
 
       formKeyInfoGeneral.currentState!.reset();
       formCreateUnit.playlist.clear();
@@ -141,8 +146,25 @@ class TopicProvider with ChangeNotifier {
 }
 
 class FormCreateUnit {
-  String title = '';
-  String description = '';
-  String urlVideo = '';
-  List<String> playlist = []; // only url video
+  String title;
+  String description;
+  String urlVideo;
+  late List<String> playlist; // only url video
+
+  FormCreateUnit({
+    this.title = '',
+    this.description = '',
+    this.urlVideo = '',
+    List<String>? playlist,
+  }) {
+    this.playlist = playlist ?? [];
+  }
+
+  factory FormCreateUnit.copy(FormCreateUnit formCreateUnit) {
+    return FormCreateUnit(
+      title: formCreateUnit.title,
+      description: formCreateUnit.description,
+      playlist: formCreateUnit.playlist.toList(),
+    );
+  }
 }

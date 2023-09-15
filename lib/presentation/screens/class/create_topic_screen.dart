@@ -61,7 +61,56 @@ class _CreateTopicResumen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final topicProvider = context.watch<TopicProvider>();
+    final formTopic = topicProvider.formCreateTopic;
+    final formUnits = topicProvider.units;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Tema',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text('Título: ${formTopic.title}'),
+        const SizedBox(height: 10),
+        Text('Descripción: ${formTopic.description}'),
+        const Divider(),
+        const Text(
+          'Unidades',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: formUnits.length,
+            itemBuilder: (context, index) {
+              final unit = formUnits[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Título: ${unit.title}'),
+                  const SizedBox(height: 10),
+                  Text('Descripción: ${unit.description}'),
+                  const SizedBox(height: 10),
+                  Text('Videos: ${unit.playlist.length}'),
+                  const Divider(),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -175,16 +224,12 @@ class _ListAssignedUnit extends StatelessWidget {
 }
 
 class _FormCreateTopic extends StatelessWidget {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  _FormCreateTopic();
-
   @override
   Widget build(BuildContext context) {
-    //final Topic formTopic;
+    final topicProvider = context.watch<TopicProvider>();
 
     return Form(
-      key: _formKey,
+      key: topicProvider.formKeyCreateTopic,
       child: Column(
         children: [
           // Title
@@ -193,8 +238,9 @@ class _FormCreateTopic extends StatelessWidget {
               prefixIcon: Icon(Icons.title_rounded),
               labelText: 'Título',
             ),
-            onSaved: (newValue) {
-              //formTopic.title = newValue ?? '';
+            initialValue: topicProvider.formCreateTopic.title,
+            onChanged: (newValue) {
+              topicProvider.formCreateTopic.title = newValue;
             },
           ),
           const SizedBox(height: 20),
@@ -205,9 +251,10 @@ class _FormCreateTopic extends StatelessWidget {
               prefixIcon: Icon(Icons.description_rounded),
               labelText: 'Descripción',
             ),
-            onSaved: (newValue) {
-              //formTopic.description = newValue ?? '';
+            onChanged: (newValue) {
+              topicProvider.formCreateTopic.description = newValue;
             },
+            initialValue: topicProvider.formCreateTopic.description,
           ),
         ],
       ),

@@ -81,8 +81,7 @@ class CreateUnitScreen extends StatelessWidget {
                         prefixIcon: Icon(Icons.link_rounded),
                       ),
                       onSaved: (newValue) {
-                        topicProvider.formCreateUnit.urlVideo =
-                            newValue ?? 'hola';
+                        topicProvider.urlVideo = newValue ?? '';
                       },
                     ),
                   ),
