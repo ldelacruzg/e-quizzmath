@@ -118,35 +118,32 @@ class _CreateClassView extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          Visibility(
-            visible: true,
-            child: Column(
-              children: [
-                // Progress
-                Row(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: LinearProgressIndicator(
-                          value: (createClassProvider.currentStepIndex + 1) /
-                              createClassProvider.numSteps,
-                          minHeight: 15,
-                        ),
+          Column(
+            children: [
+              // Progress
+              Row(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: LinearProgressIndicator(
+                        value: (createClassProvider.currentStepIndex + 1) /
+                            createClassProvider.numSteps,
+                        minHeight: 15,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 35),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 35),
 
-                // Description
-                const Text(
-                  'Al finalizar este proceso se le generará un código de la clase para que lo compartas con sus estudiantes y puedan ver el contenido.',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 35),
-              ],
-            ),
+              // Description
+              const Text(
+                'Al finalizar este proceso se le generará un código de la clase para que lo compartas con sus estudiantes y puedan ver el contenido.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 35),
+            ],
           ),
 
           // Forms

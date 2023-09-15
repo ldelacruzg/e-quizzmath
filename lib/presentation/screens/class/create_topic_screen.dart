@@ -44,13 +44,45 @@ class CreateTopicScreen extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: [
-          _FormCreateTopic(),
-          const _ListAssignedUnit(),
-          const _CreateTopicResumen(),
-        ][topicProvider.currentSteps],
-      ),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              Column(
+                children: [
+                  // Progress
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: LinearProgressIndicator(
+                            value: (topicProvider.currentSteps + 1) /
+                                topicProvider.numSteps,
+                            minHeight: 15,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 35),
+
+                  // Description
+                  const Text(
+                    'Al finalizar este proceso podrás seleccionar este tema cuando crees una clase.',
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 35),
+                ],
+              ),
+
+              // Forms
+              [
+                _FormCreateTopic(),
+                const _ListAssignedUnit(),
+                const _CreateTopicResumen(),
+              ][topicProvider.currentSteps],
+            ],
+          )),
       floatingActionButton: const _CustomFloatingActionButton(),
     );
   }
@@ -65,51 +97,55 @@ class _CreateTopicResumen extends StatelessWidget {
     final formTopic = topicProvider.formCreateTopic;
     final formUnits = topicProvider.units;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Tema',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Tema',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-        Text('Título: ${formTopic.title}'),
-        const SizedBox(height: 10),
-        Text('Descripción: ${formTopic.description}'),
-        const Divider(),
-        const Text(
-          'Unidades',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          const SizedBox(height: 20),
+          Text('Título: ${formTopic.title}'),
+          const SizedBox(height: 10),
+          Text('Descripción: ${formTopic.description}'),
+          const Divider(),
+          const Text(
+            'Unidades',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-        Expanded(
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: formUnits.length,
-            itemBuilder: (context, index) {
-              final unit = formUnits[index];
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Título: ${unit.title}'),
-                  const SizedBox(height: 10),
-                  Text('Descripción: ${unit.description}'),
-                  const SizedBox(height: 10),
-                  Text('Videos: ${unit.playlist.length}'),
-                  const Divider(),
-                ],
-              );
-            },
+          const SizedBox(height: 20),
+          Expanded(
+            child: formUnits.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: formUnits.length,
+                    itemBuilder: (context, index) {
+                      final unit = formUnits[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Título: ${unit.title}'),
+                          const SizedBox(height: 10),
+                          Text('Descripción: ${unit.description}'),
+                          const SizedBox(height: 10),
+                          Text('Videos: ${unit.playlist.length}'),
+                          const Divider(),
+                        ],
+                      );
+                    },
+                  )
+                : const CustomNotContent(message: 'No hay unidades creadas'),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -204,21 +240,23 @@ class _ListAssignedUnit extends StatelessWidget {
 
     return topicProvider.units.isEmpty
         ? const CustomNotContent(message: 'No hay unidades creadas')
-        : ListView.builder(
-            itemCount: topicProvider.units.length,
-            itemBuilder: (context, index) {
-              final unit = topicProvider.units[index];
-              return ListTile(
-                title: Text(unit.title),
-                subtitle: Text(unit.description),
-                trailing: IconButton(
-                  onPressed: () {
-                    //topicProvider.deleteUnit(index);
-                  },
-                  icon: const Icon(Icons.delete_rounded),
-                ),
-              );
-            },
+        : Expanded(
+            child: ListView.builder(
+              itemCount: topicProvider.units.length,
+              itemBuilder: (context, index) {
+                final unit = topicProvider.units[index];
+                return ListTile(
+                  title: Text(unit.title),
+                  subtitle: Text(unit.description),
+                  trailing: IconButton(
+                    onPressed: () {
+                      topicProvider.deleteUnit(index);
+                    },
+                    icon: const Icon(Icons.delete_rounded),
+                  ),
+                );
+              },
+            ),
           );
   }
 }

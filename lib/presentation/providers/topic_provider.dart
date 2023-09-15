@@ -66,6 +66,11 @@ class TopicProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteUnit(int index) {
+    _units.removeAt(index);
+    notifyListeners();
+  }
+
   // Funciones
   void loadTopics() async {
     isLoading = true;
