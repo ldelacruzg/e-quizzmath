@@ -5,6 +5,7 @@ import 'package:e_quizzmath/presentation/providers/create_class_provider.dart';
 import 'package:e_quizzmath/presentation/providers/leaderboard_provider.dart';
 import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
 import 'package:e_quizzmath/presentation/providers/topic_provider.dart';
+import 'package:e_quizzmath/presentation/providers/unit_provider.dart';
 import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,9 @@ void main() {
           ),
           ChangeNotifierProvider(
             create: (context) => TopicProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => UnitProvider(),
           ),
         ],
         child: const MainApp(),

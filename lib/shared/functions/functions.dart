@@ -28,4 +28,9 @@ class Funtions {
     final id = await getUserIdLogged();
     return collections[Collections.users]!.doc(id);
   }
+
+  static DocumentReference<Object?> getDocumentReference(
+      Collections collection, String id) {
+    return collections[collection]!.doc(id);
+  }
 }

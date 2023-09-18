@@ -1,5 +1,8 @@
+import 'package:e_quizzmath/config/firebase/collections_firebase.dart';
 import 'package:e_quizzmath/presentation/providers/topic_provider.dart';
+import 'package:e_quizzmath/presentation/providers/unit_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_not_content.dart';
+import 'package:e_quizzmath/shared/functions/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +13,7 @@ class MyTopicsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final topicProvider = context.watch<TopicProvider>();
+    final unitProvider = context.watch<UnitProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -36,7 +40,15 @@ class MyTopicsScreen extends StatelessWidget {
                         itemBuilder: (context) => [
                           PopupMenuItem(
                             child: const Text('Unidades'),
-                            onTap: () {},
+                            onTap: () {
+                              final topicRef = Funtions.getDocumentReference(
+                                Collections.topics,
+                                topic.id,
+                              );
+
+                              unitProvider.loadUnits(topicRef);
+                              context.push('/class/topic/units');
+                            },
                           ),
                         ],
                       ),

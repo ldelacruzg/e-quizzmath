@@ -98,6 +98,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/class/topics',
       builder: (context, state) => const MyTopicsScreen(),
-    )
+    ),
+    GoRoute(
+      path: '/class/topic/units',
+      builder: (context, state) => const MyUnitsScreen(),
+    ),
   ],
 );
