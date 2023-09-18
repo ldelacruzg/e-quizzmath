@@ -39,11 +39,9 @@ class TopicProvider with ChangeNotifier {
   int get numVideos => formCreateUnit.playlist.length;
 
   void addVideo() {
-    if (formKeyPlaylist.currentState!.validate()) {
-      formKeyPlaylist.currentState!.save();
-      formCreateUnit.playlist.add(urlVideo);
-      formKeyPlaylist.currentState!.reset();
-    }
+    formCreateUnit.playlist.add(urlVideo);
+    formKeyPlaylist.currentState!.reset();
+    formCreateUnit.urlVideo = '';
 
     notifyListeners();
   }
@@ -53,21 +51,78 @@ class TopicProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void saveFormCreateUnit() {
-    if (formKeyInfoGeneral.currentState!.validate()) {
+  bool saveFormCreateUnit() {
+    if (formKeyInfoGeneral.currentState!.validate() && numVideos > 0) {
       formKeyInfoGeneral.currentState!.save();
 
       _units.add(FormCreateUnit.copy(formCreateUnit));
 
       formKeyInfoGeneral.currentState!.reset();
       formCreateUnit.playlist.clear();
+
+      notifyListeners();
+      return true;
     }
 
-    notifyListeners();
+    return false;
   }
 
   void deleteUnit(int index) {
     _units.removeAt(index);
+    notifyListeners();
+  }
+
+  // Funciones para el formulario "Crear tema"
+  void validateFormCreateTopic() {
+    if (formKeyCreateTopic.currentState!.validate()) {
+      formKeyCreateTopic.currentState!.save();
+      nextStep();
+    }
+  }
+
+  // función para guardar el tema en firebase
+  Future<bool> saveFormCreateTopic() async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      // tengo que guardar el tema
+      // obtener el id del teacher logueado
+      final teacherRef = await Funtions.getUserReference();
+      final topic = Topic(
+        title: formCreateTopic.title,
+        description: formCreateTopic.description,
+      );
+
+      final topicJson = topic.toJson();
+      topicJson['teacherId'] = teacherRef;
+
+      final newTopicRef = await collections[Collections.topics]!.add(topicJson);
+
+      // tengo que guardar las unidades con la playlist
+      for (final unit in _units) {
+        final unitJson = unit.toJson();
+        unitJson['topicId'] = newTopicRef;
+
+        await collections[Collections.units]!.add(unitJson);
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void loadingDelay() async {
+    isLoading = true;
+    notifyListeners();
+    print('inicio');
+    await Future.delayed(const Duration(seconds: 3));
+    print('fin');
+    isLoading = false;
     notifyListeners();
   }
 
@@ -146,8 +201,12 @@ class TopicProvider with ChangeNotifier {
   void reset() {
     currentSteps = 0;
     _units.clear();
+    formCreateTopic.title = '';
+    formCreateTopic.description = '';
     notifyListeners();
   }
+
+  void saveTopic() {}
 }
 
 class FormCreateUnit {
@@ -171,5 +230,13 @@ class FormCreateUnit {
       description: formCreateUnit.description,
       playlist: formCreateUnit.playlist.toList(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'playlist': playlist,
+    };
   }
 }

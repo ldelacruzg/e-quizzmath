@@ -43,47 +43,59 @@ class CreateTopicScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded),
         ),
       ),
-      body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+      body: topicProvider.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : const _CreateTopicView(),
+      floatingActionButton: const _CustomFloatingActionButton(),
+    );
+  }
+}
+
+class _CreateTopicView extends StatelessWidget {
+  const _CreateTopicView();
+
+  @override
+  Widget build(BuildContext context) {
+    final topicProvider = context.watch<TopicProvider>();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           child: Column(
             children: [
-              Column(
+              // Progress
+              Row(
                 children: [
-                  // Progress
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: LinearProgressIndicator(
-                            value: (topicProvider.currentSteps + 1) /
-                                topicProvider.numSteps,
-                            minHeight: 15,
-                          ),
-                        ),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: LinearProgressIndicator(
+                        value: (topicProvider.currentSteps + 1) /
+                            topicProvider.numSteps,
+                        minHeight: 15,
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 35),
-
-                  // Description
-                  const Text(
-                    'Al finalizar este proceso podrás seleccionar este tema cuando crees una clase.',
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 35),
                 ],
               ),
+              const SizedBox(height: 35),
 
-              // Forms
-              [
-                _FormCreateTopic(),
-                const _ListAssignedUnit(),
-                const _CreateTopicResumen(),
-              ][topicProvider.currentSteps],
+              // Description
+              const Text(
+                'Al finalizar este proceso podrás seleccionar este tema cuando crees una clase.',
+                textAlign: TextAlign.center,
+              ),
             ],
-          )),
-      floatingActionButton: const _CustomFloatingActionButton(),
+          ),
+        ),
+
+        // Forms
+        [
+          _FormCreateTopic(),
+          const _ListAssignedUnit(),
+          const _CreateTopicResumen(),
+        ][topicProvider.currentSteps],
+      ],
     );
   }
 }
@@ -98,53 +110,56 @@ class _CreateTopicResumen extends StatelessWidget {
     final formUnits = topicProvider.units;
 
     return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Tema',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Tema',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Text('Título: ${formTopic.title}'),
-          const SizedBox(height: 10),
-          Text('Descripción: ${formTopic.description}'),
-          const Divider(),
-          const Text(
-            'Unidades',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            const SizedBox(height: 20),
+            Text('Título: ${formTopic.title}'),
+            const SizedBox(height: 10),
+            Text('Descripción: ${formTopic.description}'),
+            const Divider(),
+            const Text(
+              'Unidades',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: formUnits.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: formUnits.length,
-                    itemBuilder: (context, index) {
-                      final unit = formUnits[index];
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Título: ${unit.title}'),
-                          const SizedBox(height: 10),
-                          Text('Descripción: ${unit.description}'),
-                          const SizedBox(height: 10),
-                          Text('Videos: ${unit.playlist.length}'),
-                          const Divider(),
-                        ],
-                      );
-                    },
-                  )
-                : const CustomNotContent(message: 'No hay unidades creadas'),
-          ),
-        ],
+            const SizedBox(height: 20),
+            Expanded(
+              child: formUnits.isNotEmpty
+                  ? ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: formUnits.length,
+                      itemBuilder: (context, index) {
+                        final unit = formUnits[index];
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Título: ${unit.title}'),
+                            const SizedBox(height: 10),
+                            Text('Descripción: ${unit.description}'),
+                            const SizedBox(height: 10),
+                            Text('Videos: ${unit.playlist.length}'),
+                            const Divider(),
+                          ],
+                        );
+                      },
+                    )
+                  : const CustomNotContent(message: 'No hay unidades creadas'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -168,7 +183,70 @@ class _CustomFloatingActionButton extends StatelessWidget {
             children: [
               FloatingActionButton(
                 heroTag: 'save',
-                onPressed: () {},
+                onPressed: () {
+                  //topicProvider.saveFormCreateTopic();
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('¿Estas seguro de guardar?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            context.pop(false);
+                          },
+                          child: const Text('No'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            context.pop(true);
+                          },
+                          child: const Text('Si'),
+                        ),
+                      ],
+                    ),
+                  ).then((value) {
+                    if (value == true) {
+                      topicProvider.saveFormCreateTopic().then((value) {
+                        if (value) {
+                          /* ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Tema creado exitosamente'),
+                            ),
+                          ); */
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Tema creado exitosamente'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      context.go('/home');
+                                    },
+                                    child: const Text('Ok'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text('Ocurrió un error al crear el tema'),
+                            ),
+                          );
+                        }
+                      }).catchError((error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Ocurrió un error al crear el tema'),
+                          ),
+                        );
+                      });
+                    }
+                  });
+                },
                 child: const Icon(Icons.save),
               ),
               const SizedBox(height: 10),
@@ -200,9 +278,9 @@ class _CustomFloatingActionButton extends StatelessWidget {
             children: [
               FloatingActionButton(
                 heroTag: 'back',
-                onPressed: () {
-                  topicProvider.previousStep();
-                },
+                onPressed: topicProvider.isLoading
+                    ? null
+                    : () => topicProvider.previousStep(),
                 child: const Icon(Icons.arrow_back_ios_rounded),
               ),
               const SizedBox(height: 10),
@@ -218,6 +296,22 @@ class _CustomFloatingActionButton extends StatelessWidget {
               FloatingActionButton(
                 heroTag: 'next',
                 onPressed: () {
+                  if (topicProvider.currentSteps == 0) {
+                    topicProvider.validateFormCreateTopic();
+                    return;
+                  }
+
+                  if (topicProvider.currentSteps == 1) {
+                    if (topicProvider.units.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Por favor, crea las unidades'),
+                        ),
+                      );
+                      return;
+                    }
+                  }
+
                   topicProvider.nextStep();
                 },
                 child: const Icon(Icons.arrow_forward_ios_rounded),
@@ -248,12 +342,13 @@ class _ListAssignedUnit extends StatelessWidget {
                 return ListTile(
                   title: Text(unit.title),
                   subtitle: Text(unit.description),
-                  trailing: IconButton(
+                  leading: IconButton(
                     onPressed: () {
                       topicProvider.deleteUnit(index);
                     },
                     icon: const Icon(Icons.delete_rounded),
                   ),
+                  onTap: () {},
                 );
               },
             ),
@@ -268,33 +363,51 @@ class _FormCreateTopic extends StatelessWidget {
 
     return Form(
       key: topicProvider.formKeyCreateTopic,
-      child: Column(
-        children: [
-          // Title
-          TextFormField(
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.title_rounded),
-              labelText: 'Título',
-            ),
-            initialValue: topicProvider.formCreateTopic.title,
-            onChanged: (newValue) {
-              topicProvider.formCreateTopic.title = newValue;
-            },
-          ),
-          const SizedBox(height: 20),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            // Title
+            TextFormField(
+              initialValue: topicProvider.formCreateTopic.title,
+              maxLength: 50,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.title_rounded),
+                labelText: 'Título',
+              ),
+              onChanged: (newValue) {
+                topicProvider.formCreateTopic.title = newValue;
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'El título es requerido';
+                }
 
-          // Description
-          TextFormField(
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.description_rounded),
-              labelText: 'Descripción',
+                return null;
+              },
             ),
-            onChanged: (newValue) {
-              topicProvider.formCreateTopic.description = newValue;
-            },
-            initialValue: topicProvider.formCreateTopic.description,
-          ),
-        ],
+
+            // Description
+            TextFormField(
+              maxLength: 150,
+              initialValue: topicProvider.formCreateTopic.description,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.description_rounded),
+                labelText: 'Descripción',
+              ),
+              onChanged: (newValue) {
+                topicProvider.formCreateTopic.description = newValue;
+              },
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'La descripción es requerida';
+                }
+
+                return null;
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

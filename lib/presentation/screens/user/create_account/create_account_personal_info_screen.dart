@@ -15,9 +15,15 @@ class CreateAccountPersonalInfoScreen extends StatefulWidget {
 class _CreateAccountPersonalInfoScreenState
     extends State<CreateAccountPersonalInfoScreen> {
   bool _isLoading = false;
-  final controller = Get.put(UserController());
-  final UserController userController = UserController();
+  bool showPassword = false;
+  late UserController controller;
   final formaKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(UserController());
+  }
 
   void _createAccount() {
     setState(() {
@@ -34,7 +40,7 @@ class _CreateAccountPersonalInfoScreenState
         type: controller.selectedAccountType.value,
       );
 
-      userController.createUser(users).then((value) {
+      controller.createUser(users).then((value) {
         formaKey.currentState!.reset();
 
         showDialog(
@@ -58,10 +64,6 @@ class _CreateAccountPersonalInfoScreenState
             ],
           ),
         );
-      }).whenComplete(() {
-        setState(() {
-          _isLoading = false;
-        });
       });
     } else {
       showDialog(
@@ -82,6 +84,10 @@ class _CreateAccountPersonalInfoScreenState
         },
       );
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -137,8 +143,14 @@ class _CreateAccountPersonalInfoScreenState
                               child: Text('Profesor'),
                             ),
                           ],
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Seleccione un tipo de cuenta';
+                            }
+                            return null;
+                          },
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
 
                         // Nombre
                         TextFormField(
@@ -155,7 +167,6 @@ class _CreateAccountPersonalInfoScreenState
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
 
                         // Apellidos
                         TextFormField(
@@ -172,7 +183,6 @@ class _CreateAccountPersonalInfoScreenState
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
 
                         // Celular
                         TextFormField(
@@ -183,13 +193,15 @@ class _CreateAccountPersonalInfoScreenState
                             prefixIcon: Icon(Icons.phone),
                             labelText: "Teléfono",
                           ),
+                          validator: (value) {
+                            return null;
+                          },
                         ),
-                        const SizedBox(height: 16),
 
                         // Email
                         TextFormField(
                           controller: controller.email,
-                          maxLength: 30,
+                          maxLength: 50,
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(Icons.email),
@@ -199,23 +211,35 @@ class _CreateAccountPersonalInfoScreenState
                             if (value!.isEmpty) {
                               return 'Ingrese un email';
                             }
-                            if (!userController.isValidEmail(
+                            if (!controller.isValidEmail(
                                 controller.email.text.toString())) {
                               return 'Ingrese un email válido';
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 16),
 
                         // Contraseña
                         TextFormField(
-                          obscureText: true,
+                          obscureText: !showPassword,
                           controller: controller.password,
-                          maxLength: 15,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.password),
+                          maxLength: 50,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.password),
                             labelText: "Contraseña",
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  showPassword = !showPassword;
+                                });
+                              },
+                              icon: Icon(
+                                showPassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.grey,
+                              ),
+                            ),
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -224,7 +248,7 @@ class _CreateAccountPersonalInfoScreenState
                             if (value.length < 9) {
                               return 'La contraseña debe tener al menos 9 caracteres';
                             }
-                            return null; // Retorna null si la validación es exitosa
+                            return null;
                           },
                         ),
                         const SizedBox(height: 16),

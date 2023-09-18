@@ -27,7 +27,7 @@ class UserController {
         await _db.collection("Users").doc(userUID).set(userm.toJS());
       }
     } catch (e) {
-      print('Error al crear usuario');
+      //print('Error al crear usuario');
     }
   }
 

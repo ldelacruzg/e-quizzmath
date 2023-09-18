@@ -104,14 +104,15 @@ class CreateAccountCredencialsScreen extends StatelessWidget {
                         fontSize: 15,
                       ),
                       decoration: const InputDecoration(
-                          fillColor: Color.fromRGBO(247, 238, 249, 2),
-                          filled: true,
-                          prefixIcon: Icon(Icons.password_outlined, size: 25),
-                          labelText: "Contraseña",
-                          labelStyle: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black,
-                          )),
+                        fillColor: Color.fromRGBO(247, 238, 249, 2),
+                        filled: true,
+                        prefixIcon: Icon(Icons.password_outlined, size: 25),
+                        labelText: "Contraseña",
+                        labelStyle: TextStyle(
+                          fontSize: 15,
+                          color: Colors.black,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 260),

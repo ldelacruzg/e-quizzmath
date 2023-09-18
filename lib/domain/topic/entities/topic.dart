@@ -1,15 +1,3 @@
-/* class Topic {
-  String id = '';
-  String title;
-  String description;
-  List<Unit> units = [];
-
-  Topic({
-    required this.title,
-    required this.description,
-  });
-} */
-
 class Topic {
   String id;
   String title;
@@ -27,5 +15,12 @@ class Topic {
       title: map['title'],
       description: map['description'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+    };
   }
 }

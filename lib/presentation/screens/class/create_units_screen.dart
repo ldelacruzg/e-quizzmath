@@ -15,116 +15,155 @@ class CreateUnitScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Crear unidad'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            // Form para la información general
-            const Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                'Información General',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-
-            Form(
-              key: topicProvider.formKeyInfoGeneral,
-              child: Column(
-                children: [
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Título',
-                      prefixIcon: Icon(Icons.title_rounded),
-                    ),
-                    onSaved: (newValue) =>
-                        topicProvider.formCreateUnit.title = newValue ?? '',
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Descripción',
-                      prefixIcon: Icon(Icons.description_rounded),
-                    ),
-                    onSaved: (newValue) => topicProvider
-                        .formCreateUnit.description = newValue ?? '',
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 35),
-
-            // Form para la playlist
-            const Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                'Playlist',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            child: Column(
               children: [
-                Expanded(
-                  child: Form(
-                    key: topicProvider.formKeyPlaylist,
-                    child: TextFormField(
-                      decoration: const InputDecoration(
-                        labelText: 'URL Video',
-                        prefixIcon: Icon(Icons.link_rounded),
-                      ),
-                      onSaved: (newValue) {
-                        topicProvider.urlVideo = newValue ?? '';
-                      },
+                // Form para la información general
+                const Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    'Información General',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                IconButton.filled(
-                  onPressed: () {
-                    topicProvider.addVideo();
-                  },
-                  icon: const Icon(Icons.add_rounded),
+
+                Form(
+                  key: topicProvider.formKeyInfoGeneral,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        maxLength: 50,
+                        decoration: const InputDecoration(
+                          labelText: 'Título',
+                          prefixIcon: Icon(Icons.title_rounded),
+                        ),
+                        onSaved: (newValue) =>
+                            topicProvider.formCreateUnit.title = newValue ?? '',
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'El título es requerido';
+                          }
+                          return null;
+                        },
+                      ),
+                      TextFormField(
+                        maxLength: 150,
+                        decoration: const InputDecoration(
+                          labelText: 'Descripción',
+                          prefixIcon: Icon(Icons.description_rounded),
+                        ),
+                        onSaved: (newValue) => topicProvider
+                            .formCreateUnit.description = newValue ?? '',
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'La descripción es requerida';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 35),
+
+                // Form para la playlist
+                const Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    'Playlist',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Form(
+                        key: topicProvider.formKeyPlaylist,
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'URL Video',
+                            prefixIcon: Icon(Icons.link_rounded),
+                          ),
+                          onChanged: (newValue) {
+                            topicProvider.urlVideo = newValue;
+                          },
+                        ),
+                      ),
+                    ),
+                    IconButton.filled(
+                      onPressed: () {
+                        if (topicProvider.urlVideo.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Por favor, ingrese una URL'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        topicProvider.addVideo();
+                      },
+                      icon: const Icon(Icons.add_rounded),
+                    ),
+                  ],
                 ),
               ],
             ),
+          ),
 
-            const SizedBox(height: 35),
-
-            // Lista de videos
-            topicProvider.numVideos <= 0
-                ? const CustomNotContent(message: 'No hay videos')
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: topicProvider.numVideos,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(
-                            topicProvider.formCreateUnit.playlist[index],
-                          ),
-                          trailing: IconButton(
-                            onPressed: () {
-                              topicProvider.deleteVideo(index);
-                            },
-                            icon: const Icon(Icons.delete_rounded),
-                          ),
-                        );
-                      },
-                    ),
+          // Lista de videos
+          topicProvider.numVideos <= 0
+              ? const CustomNotContent(
+                  message: 'No hay videos añadidos',
+                )
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: topicProvider.numVideos,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(
+                          topicProvider.formCreateUnit.playlist[index],
+                          style:
+                              const TextStyle(overflow: TextOverflow.ellipsis),
+                          maxLines: 2,
+                        ),
+                        leading: IconButton(
+                          onPressed: () {
+                            topicProvider.deleteVideo(index);
+                          },
+                          icon: const Icon(Icons.delete_rounded),
+                        ),
+                        onTap: () {},
+                      );
+                    },
                   ),
-          ],
-        ),
+                ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          topicProvider.saveFormCreateUnit();
-          context.pop();
+          if (topicProvider.formCreateUnit.playlist.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Por favor, añade al menos un video'),
+              ),
+            );
+          }
+
+          if (topicProvider.saveFormCreateUnit()) {
+            context.pop();
+          }
         },
         child: const Icon(Icons.save_rounded),
       ),
