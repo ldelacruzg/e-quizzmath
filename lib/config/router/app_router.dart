@@ -103,5 +103,13 @@ final appRouter = GoRouter(
       path: '/class/topic/units',
       builder: (context, state) => const MyUnitsScreen(),
     ),
+    GoRoute(
+      path: '/class/join',
+      builder: (context, state) => const JoinClassScreen(),
+    ),
+    GoRoute(
+      path: '/class/leaderboard',
+      builder: (context, state) => const MyLeaderboardScreen(),
+    )
   ],
 );

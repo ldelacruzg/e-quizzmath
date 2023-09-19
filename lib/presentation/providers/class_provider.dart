@@ -3,6 +3,7 @@ import 'package:e_quizzmath/config/firebase/collections_firebase.dart';
 import 'package:e_quizzmath/domain/class/class.dart';
 import 'package:e_quizzmath/domain/user/entities/user.dart';
 import 'package:e_quizzmath/infrastructure/models/coll_user_model.dart';
+import 'package:e_quizzmath/shared/functions/functions.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +11,11 @@ class ClassProvider with ChangeNotifier {
   final List<Class> _classes = [];
   final List<User> _students = [];
   final int selectedClassIndex = 0;
+
+  // Propiedades para unirse a una clase
+  String findClassCode = '';
+  Class classFound = Class(title: '', description: '');
+  User teacherOfTheClassFound = User(firstName: '', lastName: '', email: '');
 
   bool isLoading = false;
 
@@ -73,6 +79,76 @@ class ClassProvider with ChangeNotifier {
       isLoading = false;
     }
 
+    notifyListeners();
+  }
+
+  Future<bool> classCodeExist() async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final queryClass = await collections[Collections.classes]!
+          .where('code', isEqualTo: findClassCode)
+          .limit(1)
+          .get();
+
+      if (queryClass.docs.isNotEmpty) {
+        // Obtener datos de la clase encontrada
+        final data = queryClass.docs.first.data() as Map<String, dynamic>;
+        data['id'] = queryClass.docs.first.id;
+        classFound = Class.fromJson(data);
+
+        // Obtener datos del profesor de la clase encontrada
+        final teacherRef = data['teacherId'] as DocumentReference;
+        final teacher = await teacherRef.get();
+        if (teacher.exists) {
+          final dataTeacher = teacher.data() as Map<String, dynamic>;
+          dataTeacher['id'] = teacher.id;
+          teacherOfTheClassFound =
+              UserModel.fromJson(dataTeacher).toUserEntity();
+        }
+
+        return true;
+      }
+
+      classFound = Class(title: '', description: '');
+      return false;
+    } catch (error) {
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> joinClass() async {
+    isLoading = true;
+    notifyListeners();
+
+    final studentRef = await Funtions.getUserReference();
+    final classRef =
+        Funtions.getDocumentReference(Collections.classes, classFound.id);
+
+    try {
+      final newClassStudent =
+          await collections[Collections.classStudents]!.add({
+        'studentId': studentRef,
+        'classId': classRef,
+      });
+
+      return newClassStudent.id.isNotEmpty;
+    } catch (error) {
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void restartSearch() {
+    findClassCode = '';
+    classFound = Class(title: '', description: '');
+    teacherOfTheClassFound = User(firstName: '', lastName: '', email: '');
     notifyListeners();
   }
 }

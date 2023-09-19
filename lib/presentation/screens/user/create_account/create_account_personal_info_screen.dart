@@ -26,6 +26,7 @@ class _CreateAccountPersonalInfoScreenState
   }
 
   void _createAccount() {
+    FocusScope.of(context).unfocus();
     setState(() {
       _isLoading = true;
     });

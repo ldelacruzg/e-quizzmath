@@ -65,6 +65,7 @@ class _LoginPageState extends State<LoginScreen> {
   }
 
   void _handleLogin() async {
+    FocusScope.of(context).unfocus();
     setState(() {
       isLoading = true;
     });

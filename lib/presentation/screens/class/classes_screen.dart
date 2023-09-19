@@ -78,8 +78,8 @@ class _CustomListClasses extends StatelessWidget {
               PopupMenuItem(
                 child: const Text('Clasificación'),
                 onTap: () {
-                  classProvider.loadStudentsByClass(index);
-                  context.push('/class/students');
+                  //classProvider.loadStudentsByClass(index);
+                  context.push('/class/leaderboard');
                 },
               ),
               const PopupMenuDivider(),

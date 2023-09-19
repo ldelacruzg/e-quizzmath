@@ -1,3 +1,4 @@
+import 'package:e_quizzmath/presentation/providers/class_provider.dart';
 import 'package:e_quizzmath/presentation/providers/leaderboard_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/home/custom_card_item.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ class HomeStudentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final leaderboardProvider = context.watch<LeaderboardProvider>();
+    final classProvider = context.watch<ClassProvider>();
 
     return Expanded(
       child: GridView.count(
@@ -21,7 +23,7 @@ class HomeStudentScreen extends StatelessWidget {
             onTap: () => context.push('/topics'),
             child: const CustomCardItem(
               color: Colors.orangeAccent,
-              title: 'Temas',
+              title: 'Mi clases',
               icon: Icons.grid_view_rounded,
             ),
           ),
@@ -35,18 +37,13 @@ class HomeStudentScreen extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            onTap: () => context.push('/topics'),
-            child: const CustomCardItem(
-              color: Colors.greenAccent,
-              title: 'Crear clase',
-              icon: Icons.home_work_rounded,
-            ),
-          ),
-          GestureDetector(
-            onTap: () => context.push('/topics'),
+            onTap: () {
+              classProvider.restartSearch();
+              context.push('/class/join');
+            },
             child: const CustomCardItem(
               color: Colors.redAccent,
-              title: 'Unirse a clase',
+              title: 'Unirse a una clase',
               icon: Icons.task_alt_rounded,
             ),
           ),
