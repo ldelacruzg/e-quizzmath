@@ -4,6 +4,7 @@ import 'package:e_quizzmath/presentation/providers/topic_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_circle_progress_indicator.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_not_content.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +59,7 @@ class _CustomListClasses extends StatelessWidget {
           ),
           subtitle: Text('Código: ${classProvider.classes[index].code}'),
           trailing: PopupMenuButton(
-            itemBuilder: (context) => [
+            itemBuilder: (context) => <PopupMenuEntry<String>>[
               PopupMenuItem(
                 child: const Text('Estudiantes'),
                 onTap: () {
@@ -79,6 +80,24 @@ class _CustomListClasses extends StatelessWidget {
                 onTap: () {
                   classProvider.loadStudentsByClass(index);
                   context.push('/class/students');
+                },
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                child: const Text('Copiar código'),
+                onTap: () {
+                  // copiar código en portapapeles
+                  Clipboard.setData(
+                    ClipboardData(
+                        text:
+                            '''Nombre de la clase: ${classProvider.classes[index].title}\nCódigo de la clase: ${classProvider.classes[index].code}'''),
+                  ).then((value) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Código copiado en portapapeles'),
+                      ),
+                    );
+                  });
                 },
               ),
             ],
