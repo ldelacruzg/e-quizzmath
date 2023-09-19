@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_quizzmath/config/firebase/collections_firebase.dart';
 import 'package:e_quizzmath/domain/topic/entities/topic.dart';
 import 'package:e_quizzmath/shared/functions/functions.dart';
@@ -119,14 +120,23 @@ class TopicProvider with ChangeNotifier {
   void loadingDelay() async {
     isLoading = true;
     notifyListeners();
-    print('inicio');
     await Future.delayed(const Duration(seconds: 3));
-    print('fin');
     isLoading = false;
     notifyListeners();
   }
 
   // Funciones
+  List<Topic> getTopicsByIds(List<DocumentReference> topicIds) {
+    final List<Topic> topics = [];
+
+    for (final topicId in topicIds) {
+      final topic = _topics.firstWhere((element) => element.id == topicId.id);
+      topics.add(topic);
+    }
+
+    return topics;
+  }
+
   void loadTopics() async {
     isLoading = true;
     _topics.clear();

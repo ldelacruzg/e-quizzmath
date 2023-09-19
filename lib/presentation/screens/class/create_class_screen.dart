@@ -43,7 +43,7 @@ class CreateClassScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded),
         ),
       ),
-      body: topicProvider.isLoading
+      body: topicProvider.isLoading || createClassProvider.isLoading
           ? const Center(child: CircularProgressIndicator())
           : const _CreateClassView(),
       floatingActionButton: Column(
@@ -57,9 +57,65 @@ class CreateClassScreen extends StatelessWidget {
                 FloatingActionButton(
                   heroTag: const Key('add_button'),
                   onPressed: () {
-                    if (createClassProvider.currentStepIndex == 1) {
-                      context.push('/class/create-topic');
-                    }
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('¿Estás seguro de guardar?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              context.pop(false);
+                            },
+                            child: const Text('No'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              context.pop(true);
+                            },
+                            child: const Text('Si'),
+                          ),
+                        ],
+                      ),
+                    ).then((value) {
+                      if (value == true) {
+                        createClassProvider.saveFormCreateClass().then((value) {
+                          if (value) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Clase creada exitosamente'),
+                                content: Text(
+                                    'Código de la clase: ${createClassProvider.newClassCode}'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      context.go('/home');
+                                    },
+                                    child: const Text('Ok'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Ocurrió un error al guardar la clase',
+                                ),
+                              ),
+                            );
+                          }
+                        });
+                      }
+                    }).catchError((error) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Ocurrió un error al guardar la clase',
+                          ),
+                        ),
+                      );
+                    });
                   },
                   child: const Icon(Icons.save_rounded),
                 ),
@@ -92,9 +148,10 @@ class CreateClassScreen extends StatelessWidget {
               children: [
                 FloatingActionButton(
                   heroTag: const Key('next_button'),
-                  onPressed: () {
-                    createClassProvider.nextStep();
-                  },
+                  onPressed: createClassProvider.currentStepIndex == 0
+                      ? () => _validateStepCreateClass(createClassProvider)
+                      : () => _validateStepAssignTopic(
+                          createClassProvider, context),
                   child: const Icon(Icons.arrow_forward_ios_rounded),
                 ),
                 const SizedBox(height: 10),
@@ -105,6 +162,27 @@ class CreateClassScreen extends StatelessWidget {
       ),
     );
   }
+
+  void _validateStepAssignTopic(
+      CreateClassProvider createClassProvider, BuildContext context) {
+    if (createClassProvider.hasAssignTopicRef()) {
+      createClassProvider.nextStep();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Por favor, seleccione al menos un tema',
+          ),
+        ),
+      );
+    }
+  }
+
+  void _validateStepCreateClass(CreateClassProvider createClassProvider) {
+    if (createClassProvider.validateCreateClass()) {
+      createClassProvider.nextStep();
+    }
+  }
 }
 
 class _CreateClassView extends StatelessWidget {
@@ -114,11 +192,11 @@ class _CreateClassView extends StatelessWidget {
   Widget build(BuildContext context) {
     final createClassProvider = context.watch<CreateClassProvider>();
 
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Column(
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
             children: [
               // Progress
               Row(
@@ -142,18 +220,17 @@ class _CreateClassView extends StatelessWidget {
                 'Al finalizar este proceso se le generará un código de la clase para que lo compartas con sus estudiantes y puedan ver el contenido.',
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 35),
             ],
           ),
+        ),
 
-          // Forms
-          [
-            const _FormCreateClass(),
-            const _ListAssignedTopics(),
-            const _CreateClassResumen(),
-          ][createClassProvider.currentStepIndex],
-        ],
-      ),
+        // Forms
+        [
+          const _FormCreateClass(),
+          const _ListAssignedTopics(),
+          const _CreateClassResumen(),
+        ][createClassProvider.currentStepIndex],
+      ],
     );
   }
 }
@@ -163,7 +240,72 @@ class _CreateClassResumen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    final createClassProvider = context.watch<CreateClassProvider>();
+    final topicProvider = context.watch<TopicProvider>();
+    final assignedTopics = topicProvider
+        .getTopicsByIds(createClassProvider.formCreateClass.topicsRefs);
+    final form = createClassProvider.formCreateClass;
+
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Información general',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(),
+            const SizedBox(height: 20),
+
+            // Title
+            Text('Título: ${form.title}'),
+            const SizedBox(height: 10),
+
+            // Description
+            Text('Descripción: ${form.description}'),
+            const SizedBox(height: 35),
+
+            // Assigned topics
+            const Align(
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                'Temas asignados',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Divider(),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: assignedTopics.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '#${index + 1} ${assignedTopics[index].title}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -173,36 +315,53 @@ class _FormCreateClass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final createClassProvider = context.watch<CreateClassProvider>();
-    final formKey = GlobalKey<FormState>();
-    final formClass = createClassProvider.formClass;
+    final form = createClassProvider.formCreateClass;
 
-    return Form(
-      key: formKey,
-      child: Column(
-        children: [
-          // Title
-          TextFormField(
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.title_rounded),
-              labelText: 'Título',
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Form(
+        key: createClassProvider.formKeyCreateClass,
+        child: Column(
+          children: [
+            // Title
+            TextFormField(
+              maxLength: 50,
+              initialValue: form.title,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.title_rounded),
+                labelText: 'Título',
+              ),
+              onSaved: (newValue) {
+                form.title = newValue ?? '';
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor, ingrese un título';
+                }
+                return null;
+              },
             ),
-            onSaved: (newValue) {
-              formClass.title = newValue ?? '';
-            },
-          ),
-          const SizedBox(height: 20),
 
-          // Description
-          TextFormField(
-            decoration: const InputDecoration(
-              prefixIcon: Icon(Icons.description_rounded),
-              labelText: 'Descripción',
+            // Description
+            TextFormField(
+              maxLength: 150,
+              initialValue: form.description,
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.description_rounded),
+                labelText: 'Descripción',
+              ),
+              onSaved: (newValue) {
+                form.description = newValue ?? '';
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor, ingrese una descripción';
+                }
+                return null;
+              },
             ),
-            onSaved: (newValue) {
-              formClass.description = newValue ?? '';
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -223,14 +382,15 @@ class _ListAssignedTopics extends StatelessWidget {
           return CheckboxListTile(
             title: Text(topicProvider.topics[index].title),
             subtitle: Text(topicProvider.topics[index].description),
-            value: createClassProvider.assignedTopicsIds
-                .contains(topicProvider.topics[index].id),
+            value:
+                createClassProvider.hasTopicRef(topicProvider.topics[index].id),
             onChanged: (newValue) {
               if (newValue == true) {
-                createClassProvider.addTopicId(topicProvider.topics[index].id);
+                //createClassProvider.addTopicId(topicProvider.topics[index].id);
+                createClassProvider.addTopicRef(topicProvider.topics[index].id);
               } else {
                 createClassProvider
-                    .deleteTopicId(topicProvider.topics[index].id);
+                    .deleteTopicRef(topicProvider.topics[index].id);
               }
             },
           );

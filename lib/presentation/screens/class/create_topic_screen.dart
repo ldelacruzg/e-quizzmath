@@ -123,11 +123,12 @@ class _CreateTopicResumen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const Divider(),
             const SizedBox(height: 20),
             Text('Título: ${formTopic.title}'),
             const SizedBox(height: 10),
             Text('Descripción: ${formTopic.description}'),
-            const Divider(),
+            const SizedBox(height: 35),
             const Text(
               'Unidades',
               style: TextStyle(
@@ -135,6 +136,7 @@ class _CreateTopicResumen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const Divider(),
             const SizedBox(height: 20),
             Expanded(
               child: formUnits.isNotEmpty
@@ -151,6 +153,7 @@ class _CreateTopicResumen extends StatelessWidget {
                             Text('Descripción: ${unit.description}'),
                             const SizedBox(height: 10),
                             Text('Videos: ${unit.playlist.length}'),
+                            const SizedBox(height: 10),
                             const Divider(),
                           ],
                         );
