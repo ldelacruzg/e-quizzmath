@@ -1,6 +1,7 @@
 import 'package:e_quizzmath/presentation/providers/class_provider.dart';
 import 'package:e_quizzmath/presentation/providers/create_class_provider.dart';
 import 'package:e_quizzmath/presentation/providers/topic_provider.dart';
+import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_circle_progress_indicator.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_not_content.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,41 @@ import 'package:provider/provider.dart';
 class ClassesScreen extends StatelessWidget {
   const ClassesScreen({super.key});
 
+  String getMessageNotContent(BuildContext context) {
+    final userLoggedInProvider = context.read<UserLoggedInProvider>();
+
+    switch (userLoggedInProvider.userLogged.type) {
+      case 'teacher':
+        return 'No hay clases creadas';
+      case 'student':
+        return 'No hay clases a las que te hayas unido';
+      default:
+        return 'Contacte con soporte';
+    }
+  }
+
+  Widget? _buildFloatingActionButton(BuildContext context) {
+    final userLoggedInProvider = context.watch<UserLoggedInProvider>();
+    final createClassProvider = context.watch<CreateClassProvider>();
+    final topicProvider = context.watch<TopicProvider>();
+
+    if (userLoggedInProvider.userLogged.type == 'teacher') {
+      return FloatingActionButton(
+        onPressed: () {
+          createClassProvider.reset();
+          topicProvider.loadTopics();
+          context.push('/create-class');
+        },
+        child: const Icon(Icons.add),
+      );
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final classProvider = context.watch<ClassProvider>();
-    final createClassProvider = context.watch<CreateClassProvider>();
-    final topicProvider = context.watch<TopicProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -24,18 +55,9 @@ class ClassesScreen extends StatelessWidget {
       body: classProvider.isLoading
           ? const CustomCircleProgressIndicator()
           : (classProvider.classes.isEmpty)
-              ? const CustomNotContent(
-                  message: 'No hay clases creadas',
-                )
+              ? CustomNotContent(message: getMessageNotContent(context))
               : const _CustomListClasses(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          createClassProvider.reset();
-          topicProvider.loadTopics();
-          context.push('/create-class');
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _buildFloatingActionButton(context),
     );
   }
 }
@@ -75,13 +97,13 @@ class _CustomListClasses extends StatelessWidget {
                   context.push('/class/topics');
                 },
               ),
-              PopupMenuItem(
+              /* PopupMenuItem(
                 child: const Text('Clasificación'),
                 onTap: () {
                   //classProvider.loadStudentsByClass(index);
                   context.push('/class/leaderboard');
                 },
-              ),
+              ), */
               const PopupMenuDivider(),
               PopupMenuItem(
                 child: const Text('Copiar código'),

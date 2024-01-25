@@ -20,7 +20,10 @@ class HomeStudentScreen extends StatelessWidget {
         crossAxisCount: 2,
         children: [
           GestureDetector(
-            onTap: () => context.push('/topics'),
+            onTap: () {
+              classProvider.loadClassesByStudent();
+              context.push('/classes');
+            },
             child: const CustomCardItem(
               color: Colors.orangeAccent,
               title: 'Mi clases',

@@ -82,6 +82,42 @@ class ClassProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> loadClassesByStudent() async {
+    isLoading = true;
+    _classes.clear();
+
+    // obtener el id del estudiante
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final studentId = prefs.getString('login_id') ?? '';
+    final studentRef = collections[Collections.users]?.doc(studentId);
+
+    try {
+      final queryClasses = await collections[Collections.classStudents]!
+          .where('studentId', isEqualTo: studentRef)
+          .get();
+
+      if (queryClasses.docs.isNotEmpty) {
+        for (var element in queryClasses.docs) {
+          final data = element.data() as Map<String, dynamic>;
+
+          final classRef = data['classId'] as DocumentReference;
+
+          final classDoc = await classRef.get();
+          if (classDoc.exists) {
+            final dataClass = classDoc.data() as Map<String, dynamic>;
+            dataClass['id'] = classDoc.id;
+
+            _classes.add(Class.fromJson(dataClass));
+          }
+        }
+      }
+    } finally {
+      isLoading = false;
+    }
+
+    notifyListeners();
+  }
+
   Future<bool> classCodeExist() async {
     isLoading = true;
     notifyListeners();
