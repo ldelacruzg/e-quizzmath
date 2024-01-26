@@ -1,5 +1,8 @@
+import 'package:e_quizzmath/presentation/providers/quiz_provider.dart';
 import 'package:e_quizzmath/presentation/providers/unit_provider.dart';
+import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class MyUnitsScreen extends StatelessWidget {
@@ -32,6 +35,8 @@ class _MyUnitsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final unitProvider = context.watch<UnitProvider>();
+    final quizProvider = context.watch<QuizProvider>();
+    final userLoggedProvider = context.watch<UserLoggedInProvider>();
 
     return ListView.builder(
       itemCount: unitProvider.units.length,
@@ -54,6 +59,33 @@ class _MyUnitsView extends StatelessWidget {
               Text(unit.description),
               const SizedBox(height: 10),
               Text('Videos: ${unit.playlist.length}'),
+              const SizedBox(height: 10),
+              // boton para ver los videos y otro para iniciar el examen
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      context.push(
+                        '/units/:unitId/playlist',
+                        extra: {'unitId': '1'},
+                      );
+                    },
+                    child: const Text('Playlist'),
+                  ),
+                  const SizedBox(width: 10),
+                  userLoggedProvider.isTeacher
+                      ? const SizedBox.shrink()
+                      : TextButton(
+                          onPressed: () {
+                            quizProvider.createQuiz();
+                            quizProvider.createAndAssignAQuestion();
+                            context.push('/quiz');
+                          },
+                          child: const Text('Quiz'),
+                        ),
+                ],
+              ),
             ],
           ),
         );

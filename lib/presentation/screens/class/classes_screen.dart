@@ -124,7 +124,6 @@ class _CustomListClasses extends StatelessWidget {
               ),
             ],
           ),
-          onTap: () {},
         );
       },
     );

@@ -15,6 +15,8 @@ class UserLoggedInProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool get isTeacher => _userLogged.type == 'teacher';
+
   Future<void> getUserLoggedIn(String uid) async {
     // buscar el usuario en firebase
     final queryUser = await collections[Collections.users]!.doc(uid).get();

@@ -1,6 +1,7 @@
 import 'package:e_quizzmath/config/firebase/collections_firebase.dart';
 import 'package:e_quizzmath/presentation/providers/topic_provider.dart';
 import 'package:e_quizzmath/presentation/providers/unit_provider.dart';
+import 'package:e_quizzmath/presentation/providers/user_logged_in_provider.dart';
 import 'package:e_quizzmath/presentation/widgets/custom_not_content.dart';
 import 'package:e_quizzmath/shared/functions/functions.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class MyTopicsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final topicProvider = context.watch<TopicProvider>();
     final unitProvider = context.watch<UnitProvider>();
+    final userLoggedProvider = context.watch<UserLoggedInProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -36,32 +38,32 @@ class MyTopicsScreen extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(topic.description),
-                      trailing: PopupMenuButton(
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            child: const Text('Unidades'),
-                            onTap: () {
-                              final topicRef = Funtions.getDocumentReference(
-                                Collections.topics,
-                                topic.id,
-                              );
+                      onTap: () {
+                        final topicRef = Funtions.getDocumentReference(
+                          Collections.topics,
+                          topic.id,
+                        );
 
-                              unitProvider.loadUnits(topicRef);
-                              context.push('/class/topic/units');
-                            },
-                          ),
-                        ],
-                      ),
+                        unitProvider.loadUnits(topicRef);
+                        context.push('/class/topic/units');
+                      },
                     );
                   },
                 ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          topicProvider.reset();
-          context.push('/class/create-topic');
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton:
+          userLoggedProvider.isTeacher ? _onCreateTopicButton(context) : null,
+    );
+  }
+
+  FloatingActionButton _onCreateTopicButton(BuildContext context) {
+    final topicProvider = context.watch<TopicProvider>();
+
+    return FloatingActionButton(
+      onPressed: () {
+        topicProvider.reset();
+        context.push('/class/create-topic');
+      },
+      child: const Icon(Icons.add),
     );
   }
 }
